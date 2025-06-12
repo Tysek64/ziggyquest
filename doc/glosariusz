@@ -1,0 +1,28 @@
+zmienna - typu obrażenia, atak itd.
+
+Router - GameManager
+Switch - Drużyna
+Host - Postać
+Packet - event, postać
+    id drużyny
+    target (host)
+    payload (krotka komenda*, zmienna, wartość)
+
+typy targetów
+    broadcast
+    player_unicast
+    target_unicast (ogólnie adres)
+    random_unicast
+    self_unicast
+
+Postacie
+    speed - szansa, ze trafisz atak
+    trigger - null: brak triggera, (A, B): komenda, zmienna
+
+
+Definicje w JSONIE
+    pakiety
+        najpierw drużyna - opponent / me
+        wartości obrażeń:
+            default: na podstawie statystyk
+            current: tyle ile postac ma hp
