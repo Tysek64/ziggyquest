@@ -1,0 +1,15 @@
+=== TWOJA DRUZYNA ===
+[1] p1: HP=25 MP=10
+[2] p2: HP=30 MP=7
+
+=== DRUZYNA PRZECIWNIKA ===
+p1': HP=15 MP=15
+p2': HP=20 MP=10
+
+Wybierz postac do wykonania akcji: 1
+Wybierz akcje:
+[1] atak
+[2] obrona
+[3] um1 (koszt 5)
+[4] um2 (koszt 7)
+3

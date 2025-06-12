@@ -1,0 +1,15 @@
+Postac
+Umiejetnosc
+
+Druzyna
+
+Kontroler
+Zdarzenie
+
+Wysyłane zdarzenie:
+id druzyny
+target
+krotka 3 elemetowa (komenda, zmienna, wartosc)
+
+kolejność przetwarzania zdarzeń:
+

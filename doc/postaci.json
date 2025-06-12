@@ -1,0 +1,46 @@
+{
+	"hash":		0x7553294435764788932647382,
+	"obrazek":	"https://kwojt.kieg.science/user/images/g5_helium/testimonials/KW_opt.jpg", //na razie lokalnie
+	"nazwa":	"Łamacz kawy",
+	"zdrowie":	50,
+	"magia":	10,
+	// atak, obrona, szybkość, zwinność
+	"umiejętności": [
+		{
+			"nazwa":	"atak",
+			"koszt":	0,
+			"wyzwalacz":	null,
+			"kroki":	[("ustaw", "wybrany_oni", "obrazenia", "domyslny")]
+		},
+		{
+			"nazwa":	"um1",
+			"koszt":	5,
+			"wyzwalacz":	("ustaw", "obrazenia"),
+			"kroki":	[("ustaw", "moj", "obrazenia", 0), ("ustaw", "wybrany_moj", "obrazenia", "domyslne")]
+		},
+		{
+			"nazwa":	"uml",
+			"koszt":	3,
+			"wyzwalacz":	null,
+			"kroki":	[("zmniejsz", "wszyscy_oni", "atak", 5)]
+		},
+		{
+			"nazwa":	"lecz",
+			"koszt":	7,
+			"wyzwalacz":	null,
+			"kroki":	[("zwieksz", "wybor_moj", "zdrowie", 10)]
+		},
+		{
+			"nazwa":	"leczPoObrazeniu",
+			"koszt":	7,
+			"wyzwalacz":	(null, "obrazenia"),
+			"kroki":	[("zwieksz", "ja", "zdrowie", 10)]
+		},
+		{
+			"nazwa":	"bomba",
+			"koszt":	0,
+			"wyzwalacz":	(null, null),
+			"kroki":	[("zwieksz", "obrazenia", "losowy_moj", 50)]
+		}
+	]
+}
