@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from PacketEnums import *
+from PacketEnums import Variable, Command
 from typing import Optional, Tuple
 
 @dataclass

@@ -1,5 +1,9 @@
+from Connection import Connection
+from Packet import Packet
+from PacketEnums import Target, Command, Team, Value
+
 class Character:
-    def __init__(self, checksum: int, img_link: str, name: str, hp: int,
+    def __init__(self, port: Connection, checksum: int, img_link: str, name: str, hp: int,
                  mp: int, attack: int, defense: int, speed: int, abilities: list):
         self.checksum = checksum
         self.img_link = img_link
@@ -11,11 +15,13 @@ class Character:
         self.speed = speed
         self.abilities = abilities
 
-    def send_packet(self, packet):
-        raise NotImplemented()
+        self.port = port
 
-    def receive(self, packet):
-        raise NotImplemented()
+    def send_packet(self, packet: Packet):
+        self.port.transfer_packet(self, packet)
+
+    def receive_packet(self, packet):
+ 
 
     def __str__(self):
         return f'''
