@@ -51,3 +51,10 @@ if __name__ == '__main__':
     print('\n=== SELF BROADCAST TEST ===')
     packet = h12.generate_packet(1, Target.BROADCAST)
     h12.send_packet(packet)
+
+    print('\n=== RANDOM UNICAST TEST ===')
+    packet = h11.generate_packet(2, Target.RANDOM_UNICAST)
+    h11.send_packet(packet)
+    packet = h22.generate_packet(2, Target.RANDOM_UNICAST)
+    h22.send_packet(packet)
+

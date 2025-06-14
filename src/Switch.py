@@ -26,7 +26,7 @@ class Switch:
             for host in self.ports:
                 host.send_packet(packet, sender=self)
         elif packet.dst_host == Target.RANDOM_UNICAST:
-            self.ports[random.randint(0, len(self.hosts))].transfer_packet(self, packet)
+            self.ports[random.randint(0, len(self.ports) - 1)].send_packet(packet, sender=self)
         elif packet.dst_host == Target.SELF_UNICAST:
             pass
         elif packet.dst_host == Target.PLAYER_UNICAST:
