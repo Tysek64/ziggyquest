@@ -1,7 +1,7 @@
 from Connection import Connection
 from Inteface import Interface
 from Packet import Packet
-from PacketEnums import Command
+from PacketEnums import Command, Target
 
 class Host:
     def __init__(self, hostname = None):
@@ -18,7 +18,10 @@ class Host:
         return Packet(src_net=self.port.net_addr, dst_net=net_addr, dst_host=host_addr, payload=None, id=None)
 
     def send_packet(self, packet: Packet):
-        self.port.send_packet(packet, sender=self)
+        if packet.dst_host == Target.SELF_UNICAST:
+            self.receive_packet(packet)
+        else:
+            self.port.send_packet(packet, sender=self)
 
     def receive_packet(self, packet: Packet):
         print(f'{self} received {packet}')
