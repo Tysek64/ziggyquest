@@ -10,10 +10,10 @@ class Host:
     def __str__(self):
         return self.hostname if self.hostname is not None else super.__str__(self)
 
-    def connectInterface(self, interface: Interface):
+    def connect_interface(self, interface: Interface):
         self.port = interface
 
-    def generatePacket(self, net_addr: int, host_addr: int) -> Packet:
+    def generate_packet(self, net_addr: int, host_addr: int) -> Packet:
         return Packet(src_net=self.port.net_addr, dst_net=net_addr, dst_host=host_addr, payload=None, id=None)
 
     def send_packet(self, packet: Packet):

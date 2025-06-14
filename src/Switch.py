@@ -15,10 +15,10 @@ class Switch:
     def __str__(self):
         return self.hostname if self.hostname is not None else super.__str__(self)
 
-    def addInterface(self, interface: Interface):
+    def add_interface(self, interface: Interface):
         self.ports.append(interface)
 
-    def connectRouter(self, interface: Interface):
+    def connect_router(self, interface: Interface):
         self.router = interface
 
     def send_packet(self, packet: Packet):
