@@ -8,6 +8,9 @@ class Command(Enum):
     EXECUTE = auto()   # for packets at turn begin
     NO_REMAIN = auto() # for packets at turn end
 
+    QUERY = auto()     # for querying user input
+    REPLY = auto()     # for transmitting user input
+
 class Team(Enum):
     OPPONENT = auto()
     ME = auto()

@@ -1,6 +1,7 @@
 from Connection import Connection
 from Inteface import Interface
 from Packet import Packet
+from PacketEnums import Command
 
 class Host:
     def __init__(self, hostname = None):
@@ -20,4 +21,9 @@ class Host:
         self.port.send_packet(packet, sender=self)
 
     def receive_packet(self, packet: Packet):
-        print(f'Received packet {packet}')
+        print(f'{self} received {packet}')
+        if packet.payload is not None and packet.payload[0] == Command.QUERY:
+            reply_packet = self.generate_packet(packet.src_net, 0)
+            reply_packet.payload = (Command.REPLY, None, int(input(packet.payload[2])))
+
+            self.send_packet(reply_packet)
