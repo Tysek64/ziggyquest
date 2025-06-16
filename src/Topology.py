@@ -4,13 +4,14 @@ from Router import Router
 from Connection import Connection
 from Inteface import Interface
 from PacketEnums import Target
+from NetInfo import NetInfo
 
 if __name__ == '__main__':
     mainRouter = Router('net0.router')
 
-    sw1 = Switch(1, 'net1.switch')
-    sw2 = Switch(2, 'net2.switch')
-    sw0 = Switch(0, 'net0.switch')
+    sw1 = Switch(NetInfo(1, 0), 'net1.switch')
+    sw2 = Switch(NetInfo(2, 0), 'net2.switch')
+    sw0 = Switch(NetInfo(0, 0), 'net0.switch')
 
     h11 = Host('net1.host1')
     h12 = Host('net1.host2')
@@ -32,28 +33,28 @@ if __name__ == '__main__':
     p1s0con = Connection(sw0, p1)
     p2s0con = Connection(sw0, p2)
 
-    mainRouter.add_interface(Interface(1, 0, rs1con))
-    mainRouter.add_interface(Interface(2, 0, rs2con))
-    mainRouter.add_interface(Interface(0, 0, rs0con))
+    mainRouter.add_interface(Interface(NetInfo(1, 0), rs1con))
+    mainRouter.add_interface(Interface(NetInfo(2, 0), rs2con))
+    mainRouter.add_interface(Interface(NetInfo(0, 0), rs0con))
 
-    sw1.connect_router(Interface(0, 0, rs1con))
-    sw2.connect_router(Interface(0, 0, rs2con))
-    sw0.connect_router(Interface(0, 0, rs0con))
+    sw1.connect_router(Interface(NetInfo(0, 0), rs1con))
+    sw2.connect_router(Interface(NetInfo(0, 0), rs2con))
+    sw0.connect_router(Interface(NetInfo(0, 0), rs0con))
 
-    sw1.add_interface(Interface(1, 1, h1s1con))
-    sw1.add_interface(Interface(1, 2, h2s1con))
-    sw2.add_interface(Interface(2, 1, h1s2con))
-    sw2.add_interface(Interface(2, 2, h2s2con))
-    sw0.add_interface(Interface(0, 1, p1s0con))
-    sw0.add_interface(Interface(0, 2, p2s0con))
+    sw1.add_interface(Interface(NetInfo(1, 1), h1s1con))
+    sw1.add_interface(Interface(NetInfo(1, 2), h2s1con))
+    sw2.add_interface(Interface(NetInfo(2, 1), h1s2con))
+    sw2.add_interface(Interface(NetInfo(2, 2), h2s2con))
+    sw0.add_interface(Interface(NetInfo(0, 1), p1s0con))
+    sw0.add_interface(Interface(NetInfo(0, 2), p2s0con))
 
-    h11.connect_interface(Interface(1, 0, h1s1con))
-    h12.connect_interface(Interface(1, 0, h2s1con))
-    h21.connect_interface(Interface(2, 0, h1s2con))
-    h22.connect_interface(Interface(2, 0, h2s2con))
+    h11.connect_interface(Interface(NetInfo(1, 0), h1s1con))
+    h12.connect_interface(Interface(NetInfo(1, 0), h2s1con))
+    h21.connect_interface(Interface(NetInfo(2, 0), h1s2con))
+    h22.connect_interface(Interface(NetInfo(2, 0), h2s2con))
 
-    p1.connect_interface(Interface(0, 0, p1s0con))
-    p2.connect_interface(Interface(0, 0, p2s0con))
+    p1.connect_interface(Interface(NetInfo(0, 0), p1s0con))
+    p2.connect_interface(Interface(NetInfo(0, 0), p2s0con))
 
     print('=== ROUTED TARGET UNICAST TEST ===')
     packet = h11.generate_packet(2, 2)

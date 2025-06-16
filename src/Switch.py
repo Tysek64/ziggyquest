@@ -1,17 +1,17 @@
 from Connection import Connection
 from Inteface import Interface
 from Packet import Packet
-from PacketEnums import Target, Command
+from PacketEnums import Target, Command, Team
 import random
+from NetInfo import NetInfo
+from NetDevice import NetDevice
 
-class Switch:
-    def __init__(self, net_addr: int, hostname=None):
-        self.net_addr = net_addr
+class Switch(NetDevice):
+    def __init__(self, net_info: NetInfo, hostname=None):
+        self.net_info = net_info
         self.ports: list[Interface] = []
-        self.router: Interface = None
-
+        self.router = None
         self.hostname = hostname
-
         self.packet_queue: list[Packet] = []
 
     def __str__(self):
@@ -46,14 +46,15 @@ class Switch:
         elif packet.dst_host == Target.PLAYER_UNICAST:
             self.packet_queue.append(packet)
 
-            query_packet = Packet(id=None, src_net=self.net_addr, dst_net=0, dst_host=packet.src_net, payload=(Command.QUERY, None, 'Input target ID: '))
+            query_packet = Packet(id=None, src_net=self.net_info.net_addr, dst_net=0,
+                                  dst_host=packet.src_net, payload=(Command.QUERY, None, 'Input target ID: '))
             self.router.send_packet(query_packet, sender=self)
         elif packet.dst_host == Target.TARGET_UNICAST:
             raise ValueError('Switch received packet destined to a specific host, without the host address')
         else:
             success = False
             for host in self.ports:
-                if host.host_addr == packet.dst_host:
+                if host.address.host_addr == packet.dst_host:
                     if success:
                         raise ConnectionError(f'Two hosts with the same address connected to switch {self}')
                     else:
@@ -63,8 +64,8 @@ class Switch:
                 raise ConnectionError(f'Packet {packet} could not be delivered, because the destination host is not connected to switch {self}')
 
     def receive_packet(self, packet: Packet):
-        if packet.dst_net == self.net_addr:
-            if packet.dst_host == 0:
+        if packet.dst_net == self.net_info.net_addr:
+            if packet.dst_host == self.net_info.host_addr:
                 self.process_packet(packet)
             else:
                 self.send_packet(packet)

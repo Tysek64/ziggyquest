@@ -21,7 +21,7 @@ class Character:
         self.port.transfer_packet(self, packet)
 
     def receive_packet(self, packet):
- 
+        pass
 
     def __str__(self):
         return f'''

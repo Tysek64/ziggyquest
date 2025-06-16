@@ -1,9 +1,10 @@
 from Packet import Packet
 from Connection import Connection
 from Inteface import Interface
+from NetDevice import NetDevice
 
-class Router:
-    def __init__(self, hostname=None):
+class Router(NetDevice):
+    def __init__(self, hostname: str | None = None):
         self.ports: list[Interface] = []
         self.hostname = hostname
 
@@ -19,7 +20,7 @@ class Router:
     def receive_packet(self, packet: Packet):
         success = False
         for port in self.ports:
-            if port.net_addr == packet.dst_net:
+            if port.address.net_addr == packet.dst_net:
                 if success:
                     raise ConnectionError(f'Two networks with the same address connected to router {self}')
                 else:
