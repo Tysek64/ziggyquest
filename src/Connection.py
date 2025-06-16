@@ -6,10 +6,10 @@ class Connection:
         self.end = end
 
     def transfer_packet(self, sender, packet: Packet) -> None:
-        if sender == self.begin:
+        if sender is self.begin:
             print(f'{self.begin} -> {self.end}')
             self.end.receive_packet(packet)
-        elif sender == self.end:
+        elif sender is self.end:
             print(f'{self.end} -> {self.begin}')
             self.begin.receive_packet(packet)
         else:
