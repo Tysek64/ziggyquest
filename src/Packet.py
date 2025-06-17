@@ -15,4 +15,6 @@ class Packet:
     def make_packet(template: tuple = (None, None, None, None, None)):
         return Packet(id=None, src_net=None, dst_net=template[0], dst_host=template[1], payload=(template[2], template[3], template[4]))
 
-
+    @staticmethod
+    def generate_packet(net_addr: int, host_addr: int):
+        return Packet(src_net=None, dst_net=net_addr, dst_host=host_addr, payload=None, id=None)

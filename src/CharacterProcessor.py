@@ -35,11 +35,14 @@ class CharacterProcessor(PacketProcessor):
                     #TODO : check if we can afford
                     for step in self.base_character.abilities[packet.payload[2]].packets:
                         new_packet = Packet.make_packet(step)
+                        new_payload = list(new_packet.payload)
 
                         if new_packet.payload[2] == Value.CURRENT:
-                            new_packet.payload[2] = getattr(self.character_state, self.attr_map[new_packet.payload[1]][0])
+                            new_payload[2] = getattr(self.character_state, self.attr_map[new_packet.payload[1]][0])
                         elif new_packet.payload[2] == Value.DEFAULT:
-                            new_packet.payload[2] = getattr(self.base_character, self.attr_map[new_packet.payload[1]][0])
+                            new_payload[2] = getattr(self.base_character, self.attr_map[new_packet.payload[1]][0])
+
+                        new_packet.payload = new_payload
 
                         reply_packets.append(new_packet)
                 else:

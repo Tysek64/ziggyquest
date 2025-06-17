@@ -13,7 +13,7 @@ from pathlib import Path
 if __name__ == '__main__':
     character = CharacterFactory().make_characters(Path('./characters'))[0]
 
-    mainRouter = Router('net0.router')
+    mainRouter = Router(NetInfo(-1, 0), 'net0.router')
 
     sw1 = Switch(NetInfo(1, 0), 'net1.switch')
     sw2 = Switch(NetInfo(2, 0), 'net2.switch')
@@ -62,9 +62,7 @@ if __name__ == '__main__':
     p1.connect_interface(Interface(NetInfo(0, 0), p1s0con))
     p2.connect_interface(Interface(NetInfo(0, 0), p2s0con))
 
-    packet = h11.generate_packet(0, 1)
-    packet.payload = (Command.QUERY, None, 'Input player ID: ')
-    sw1.receive_packet(packet)
+    mainRouter.handshake()
 
     ''' 
     print('=== ROUTED TARGET UNICAST TEST ===')
