@@ -43,9 +43,8 @@ class CharacterFactory:
             self.parse_abilities(json_file['abilities'])
         )
 
-    # packet is a list, because of json file, but it is a tuple
-    def parse_packet(self, packet: list) -> tuple:
-        # gdzies pomiedzy dicta i z dicta wa
+    # packet is a list, because of json file, but it is a tuple def parse_packet(self, packet: list) -> tuple: gdzies pomiedzy dicta i z dicta wa
+    def parse_packet(self, packet):
         parse_dict = {
             'opponent': Team.OPPONENT,
             'me': Team.ME,

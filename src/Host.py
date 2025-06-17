@@ -4,12 +4,14 @@ from Packet import Packet
 from PacketEnums import Command, Target, Team
 from NetDevice import NetDevice
 from NetInfo import NetInfo
-# TODO host jako kontroler postaci,
+from PacketProcessor import PacketProcessor
+
 class Host(NetDevice):
-    def __init__(self, net_info: NetInfo, hostname = None):
+    def __init__(self, net_info: NetInfo, hostname = None, processor: PacketProcessor = None):
         self.port: Interface = None
         self.net_info = net_info
         self.hostname = hostname
+        self.packet_processor = processor
 
     def __str__(self):
         return self.hostname if self.hostname is not None else super.__str__(self)
@@ -33,8 +35,6 @@ class Host(NetDevice):
 
     def receive_packet(self, packet: Packet):
         print(f'{self} received {packet}')
-        if packet.payload is not None and packet.payload[0] == Command.QUERY:
-            reply_packet = self.generate_packet(packet.src_net, 0)
-            reply_packet.payload = (Command.REPLY, None, int(input(packet.payload[2])))
-
+        reply_packets = self.packet_processor.process_packet(packet)
+        for reply_packet in reply_packets:
             self.send_packet(reply_packet)

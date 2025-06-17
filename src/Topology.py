@@ -1,25 +1,31 @@
-from Host import Host
-from Switch import Switch
-from Router import Router
+from CharacterParser import CharacterFactory
+from CharacterProcessor import CharacterProcessor
 from Connection import Connection
+from Host import Host
 from Inteface import Interface
-from PacketEnums import Target
 from NetInfo import NetInfo
+from PacketEnums import Target, Command
+from PlayerProcessor import PlayerProcessor
+from Router import Router
+from Switch import Switch
+from pathlib import Path
 
 if __name__ == '__main__':
+    character = CharacterFactory().make_characters(Path('./characters'))[0]
+
     mainRouter = Router('net0.router')
 
     sw1 = Switch(NetInfo(1, 0), 'net1.switch')
     sw2 = Switch(NetInfo(2, 0), 'net2.switch')
     sw0 = Switch(NetInfo(0, 0), 'net0.switch')
 
-    h11 = Host('net1.host1')
-    h12 = Host('net1.host2')
-    h21 = Host('net2.host1')
-    h22 = Host('net2.host2')
+    h11 = Host(NetInfo(1, 1), 'net1.host1', CharacterProcessor(character))
+    h12 = Host(NetInfo(1, 2), 'net1.host2', CharacterProcessor(character))
+    h21 = Host(NetInfo(2, 1), 'net2.host1', CharacterProcessor(character))
+    h22 = Host(NetInfo(2, 2), 'net2.host2', CharacterProcessor(character))
 
-    p1 = Host('net0.player1')
-    p2 = Host('net0.player2')
+    p1 = Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor())
+    p2 = Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor())
 
     rs1con = Connection(mainRouter, sw1)
     rs2con = Connection(mainRouter, sw2)
@@ -56,6 +62,11 @@ if __name__ == '__main__':
     p1.connect_interface(Interface(NetInfo(0, 0), p1s0con))
     p2.connect_interface(Interface(NetInfo(0, 0), p2s0con))
 
+    packet = h11.generate_packet(0, 1)
+    packet.payload = (Command.QUERY, None, 'Input player ID: ')
+    sw1.receive_packet(packet)
+
+    ''' 
     print('=== ROUTED TARGET UNICAST TEST ===')
     packet = h11.generate_packet(2, 2)
     h11.send_packet(packet)
@@ -95,3 +106,4 @@ if __name__ == '__main__':
     print('\n=== SELF PLAYER UNICAST TEST ===')
     packet = h21.generate_packet(2, Target.PLAYER_UNICAST)
     h21.send_packet(packet)
+    '''

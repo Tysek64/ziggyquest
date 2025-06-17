@@ -1,6 +1,6 @@
-from enum import Enum, auto
+from enum import Flag, Enum, auto
 
-class Command(Enum):
+class Command(Flag):
     SET = auto()
     INCREASE = auto()
     DECREASE = auto()
@@ -22,7 +22,7 @@ class Target(Enum):
     RANDOM_UNICAST = auto()
     SELF_UNICAST = auto()
 
-class Variable(Enum):
+class Variable(Flag):
     DAMAGE = auto()
     HP = auto()
     MP = auto()
