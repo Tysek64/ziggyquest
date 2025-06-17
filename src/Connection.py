@@ -7,8 +7,10 @@ class Connection:
 
     def transfer_packet(self, sender, packet: Packet) -> None:
         if sender is self.begin:
+            print(f'{self.begin} -> {self.end}')
             self.end.receive_packet(packet)
         elif sender is self.end:
+            print(f'{self.end} -> {self.begin}')
             self.begin.receive_packet(packet)
         else:
-            raise ConnectionError('Object is neither a sender nor a receiver')
+            raise ConnectionError('The sender is not connected to this Connection')

@@ -1,12 +1,15 @@
-from enum import Enum, auto
+from enum import Flag, Enum, auto
 
-class Command(Enum):
+class Command(Flag):
     SET = auto()
     INCREASE = auto()
     DECREASE = auto()
 
     EXECUTE = auto()   # for packets at turn begin
     NO_REMAIN = auto() # for packets at turn end
+
+    QUERY = auto()     # for querying user input
+    REPLY = auto()     # for transmitting user input
 
 class Team(Enum):
     OPPONENT = auto()
@@ -19,7 +22,7 @@ class Target(Enum):
     RANDOM_UNICAST = auto()
     SELF_UNICAST = auto()
 
-class Variable(Enum):
+class Variable(Flag):
     DAMAGE = auto()
     HP = auto()
     MP = auto()
