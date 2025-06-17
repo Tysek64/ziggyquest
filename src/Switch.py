@@ -38,7 +38,7 @@ class Switch(NetDevice):
         elif packet.payload is not None and packet.payload[0] == Command.NO_REMAIN:
             self.remaining_nonanswered -= 1
             if self.remaining_nonanswered == 0:
-                print(f'For {self}, the turn is over!')
+                #print(f'For {self}, the turn is over!')
                 end_turn_packet = Packet.generate_packet(-1, 0)
                 end_turn_packet.src_net = self.net_info.net_addr
                 end_turn_packet.payload = (Command.NO_REMAIN, None, None)
@@ -48,8 +48,9 @@ class Switch(NetDevice):
 
     def send_packet(self, packet: Packet):
         if packet.dst_host == Target.BROADCAST:
+            if packet.payload is None or packet.payload[0] != Command.END_TURN:
+                self.remaining_nonanswered += len(self.ports)
             for host in self.ports:
-                self.remaining_nonanswered += 1
                 host.send_packet(packet, sender=self)
         elif packet.dst_host == Target.RANDOM_UNICAST:
             host_ID = random.randint(0, len(self.ports) - 1)

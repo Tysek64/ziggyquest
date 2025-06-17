@@ -25,6 +25,8 @@ class Character:
  ATK: {self.attack}
  DEF: {self.defense}
  SPD: {self.speed}
+ '''
+        '''
  ABL: 
   {'\n  '.join([str(ability) for ability in self.abilities])}
         '''

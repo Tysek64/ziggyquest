@@ -50,6 +50,17 @@ class CharacterProcessor(PacketProcessor):
                     queued_packets.extend(self.base_character.abilities[packet.payload[2]].packets)
                     # creates key if it did not exist
                     self.trigger_queue[self.base_character.abilities[packet.payload[2]].trigger] = queued_packets
+            elif packet.payload[0] == Command.END_TURN:
+                self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage))
+                self.character_state.damage = 0
+            elif packet.payload[0] == Command.QUERY:
+                reply_packet = Packet.generate_packet(packet.src_net, 0)
+                reply_packet.payload = (Command.REPLY, None, 
+                                        self.base_character.name if packet.payload[1] == Variable.NAME else
+                                        self.character_state if packet.payload[1] == Variable.STATS else
+                                        '\n'.join([f'{abl.name}: {abl.cost}' for abl in self.base_character.abilities]))
+
+                reply_packets.append(reply_packet)
             elif packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):
                 if packet.payload[1] in self.attr_map:
                     attr_name, minimum, maximum = self.attr_map[packet.payload[1]]
