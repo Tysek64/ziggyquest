@@ -4,6 +4,7 @@ from Connection import Connection
 from Inteface import Interface
 from NetDevice import NetDevice
 from NetInfo import NetInfo
+
 class Router(NetDevice):
     def __init__(self, net_info: NetInfo, hostname: str | None = None):
         self.ports: list[Interface] = []
@@ -13,13 +14,18 @@ class Router(NetDevice):
         self.current_team = 1
         self.current_move = (None, None)
 
+        self.finished_turn = []
+
     def __str__(self):
         return self.hostname if self.hostname is not None else super.__str__(self)
 
     def add_interface(self, interface: Interface):
         self.ports.append(interface)
+        self.finished_turn.append(True)
 
     def handshake(self):
+        self.finished_turn = [True for i in self.finished_turn]
+
         packet = Packet.generate_packet(0, self.current_team)
         packet.payload = (Command.QUERY, None, 'Input character ID: ')
         self.send_packet(packet)
@@ -29,19 +35,25 @@ class Router(NetDevice):
         self.send_packet(packet)
 
     def process_packet(self, packet: Packet):
-        print(f'{self} received {packet}')
-        if self.current_move[0] is None:
-            self.current_move = (packet.payload[2], None)
-        elif self.current_move[1] is None:
-            self.current_move = (self.current_move[0], packet.payload[2])
-
-            start_turn_packet = Packet.generate_packet(self.current_team, self.current_move[0])
-            start_turn_packet.payload = (Command.EXECUTE, None, self.current_move[1])
-
-            self.send_packet(start_turn_packet)
-            self.current_move = (None, None)
+        #print(f'{self} received {packet}')
+        if packet.payload is not None and packet.payload[0] == Command.NO_REMAIN:
+            self.finished_turn[packet.src_net] = True
+            if sum(self.finished_turn) == len(self.finished_turn):
+                print(f'For {self}, the turn is over!\n')
         else:
-            raise ValueError(f'Router {self} received a reply to no asked questions')
+            if self.current_move[0] is None:
+                self.current_move = (packet.payload[2], None)
+            elif self.current_move[1] is None:
+                self.current_move = (self.current_move[0], packet.payload[2])
+
+                start_turn_packet = Packet.generate_packet(self.current_team, self.current_move[0])
+                start_turn_packet.payload = (Command.EXECUTE, None, self.current_move[1])
+
+                self.finished_turn[self.current_team] = False
+                self.send_packet(start_turn_packet)
+                self.current_move = (None, None)
+            else:
+                raise ValueError(f'Router {self} received a reply to no asked questions')
 
     def send_packet(self, packet: Packet):
         packet.src_net = self.net_info.net_addr
@@ -54,6 +66,7 @@ class Router(NetDevice):
                 if success:
                     raise ConnectionError(f'Two networks with the same address connected to router {self}')
                 else:
+                    self.finished_turn[port.address.net_addr] = False
                     port.send_packet(packet, sender=self)
                     success = True
         if not success:

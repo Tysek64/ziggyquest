@@ -50,8 +50,8 @@ class CharacterProcessor(PacketProcessor):
                     queued_packets.extend(self.base_character.abilities[packet.payload[2]].packets)
                     # creates key if it did not exist
                     self.trigger_queue[self.base_character.abilities[packet.payload[2]].trigger] = queued_packets
-            elif packet.payload[0] == Command.SET | Command.INCREASE | Command.DECREASE:
-                if packet.payload[1] in attr_map:
+            elif packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):
+                if packet.payload[1] in self.attr_map:
                     attr_name, minimum, maximum = self.attr_map[packet.payload[1]]
                     current_val = getattr(self.character_state, attr_name)
                     amount = packet.payload[2]
@@ -70,7 +70,18 @@ class CharacterProcessor(PacketProcessor):
 
                 for k, v in self.trigger_queue.items():
                     if self.match_packet(packet, k):
-                        reply_packets.extend(v)
+                        for step in v:
+                            new_packet = Packet.make_packet(step)
+                            new_payload = list(new_packet.payload)
+
+                            if new_packet.payload[2] == Value.CURRENT:
+                                new_payload[2] = getattr(self.character_state, self.attr_map[new_packet.payload[1]][0])
+                            elif new_packet.payload[2] == Value.DEFAULT:
+                                new_payload[2] = getattr(self.base_character, self.attr_map[new_packet.payload[1]][0])
+
+                            new_packet.payload = new_payload
+
+                            reply_packets.append(new_packet)
                         self.trigger_queue[k] = []
 
         return reply_packets

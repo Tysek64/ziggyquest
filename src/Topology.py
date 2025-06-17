@@ -62,7 +62,8 @@ if __name__ == '__main__':
     p1.connect_interface(Interface(NetInfo(0, 0), p1s0con))
     p2.connect_interface(Interface(NetInfo(0, 0), p2s0con))
 
-    mainRouter.handshake()
+    for i in range(10):
+        mainRouter.handshake()
 
     ''' 
     print('=== ROUTED TARGET UNICAST TEST ===')
