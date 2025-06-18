@@ -7,6 +7,7 @@ class Command(Flag):
 
     EXECUTE = auto()   # for packets at turn begin
     NO_REMAIN = auto() # for packets at turn end
+    END_TURN = auto()  # for committing the ending of a turn (for characters to handle accumulated damage)
 
     QUERY = auto()     # for querying user input
     REPLY = auto()     # for transmitting user input
@@ -29,6 +30,10 @@ class Variable(Flag):
     ATTACK = auto()
     DEFENSE = auto()
     SPEED = auto()
+
+    ABILITIES = auto() # for querying abilities
+    STATS = auto()     # for querying stats
+    NAME = auto()      # for querying name
 
 class Value(Enum):
     DEFAULT = auto()

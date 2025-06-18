@@ -35,7 +35,12 @@ class Host(NetDevice):
             self.port.send_packet(packet, sender=self)
 
     def receive_packet(self, packet: Packet):
-        print(f'{self} received {packet}')
+        if packet.payload is not None and packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):
+            print(f'{self} received {packet}')
         reply_packets = self.packet_processor.process_packet(packet)
-        for reply_packet in reply_packets:
-            self.send_packet(reply_packet)
+        end_turn_packet = Packet.generate_packet(self.port.address.net_addr, self.port.address.host_addr)
+        end_turn_packet.payload = (Command.NO_REMAIN, None, None)
+        reply_packets.append(end_turn_packet)
+        if packet.payload is None or packet.payload[0] != Command.END_TURN:
+            for reply_packet in reply_packets:
+                self.send_packet(reply_packet)
