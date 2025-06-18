@@ -25,14 +25,14 @@ class Host(NetDevice):
     def send_packet(self, packet: Packet):
         packet.src_net = self.net_info.net_addr
         if packet.dst_host == Target.SELF_UNICAST:
-            self.receive_packet(packet)
-        else:
-            if packet.dst_net == Team.ME:
-                packet.dst_net = self.net_info.net_addr
-            elif packet.dst_net == Team.OPPONENT:
-                packet.dst_net = 3 - self.net_info.net_addr # zalozenie - dwoch graczy
+            packet.dst_host = self.net_info.host_addr
 
-            self.port.send_packet(packet, sender=self)
+        if packet.dst_net == Team.ME:
+            packet.dst_net = self.net_info.net_addr
+        elif packet.dst_net == Team.OPPONENT:
+            packet.dst_net = 3 - self.net_info.net_addr # zalozenie - dwoch graczy
+
+        self.port.send_packet(packet, sender=self)
 
     def receive_packet(self, packet: Packet):
         if packet.payload is not None and packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):

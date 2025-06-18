@@ -38,6 +38,8 @@ class Router(NetDevice):
         packet.payload = (Command.QUERY, None, 'Input character ID: ')
         self.send_packet(packet)
 
+        self.finished_turn = [True for i in self.finished_turn]
+
     def end_turn(self):
         self.current_move = (None, None)
 
