@@ -30,6 +30,10 @@ class Router(NetDevice):
         packet.payload = (Command.QUERY, Variable.STATS, "")
         self.send_packet(packet)
 
+        packet = Packet.generate_packet(3 - self.current_team, Target.BROADCAST)
+        packet.payload = (Command.QUERY, Variable.NAME, "")
+        self.send_packet(packet)
+
         packet = Packet.generate_packet(0, self.current_team)
         packet.payload = (Command.QUERY, None, 'Input character ID: ')
         self.send_packet(packet)

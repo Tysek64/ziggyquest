@@ -1,0 +1,9 @@
+
+
+Tura sie konczy gdy:
+- Router otrzyma od kazdego switcha NO_REMAIN
+- Gdy ktorys host otrzymal EXECUTE
+
+current_move w routerze trzyma None gdy nikt nie wykonal tury i jest to sprawdzane. Po wykonaniu EXECUTE to sie wypelnia.
+
+Po otrzymaniu end turn router wysyla END_TURN i postacie procesuja DAMAGE i aktualizuja hp.  
