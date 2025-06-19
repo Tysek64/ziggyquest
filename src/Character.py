@@ -8,6 +8,7 @@ class Character:
                  mp: int, attack: int, defense: int, speed: int, abilities: list):
         self.checksum = checksum
         self.img_link = img_link
+        self.loaded_image = None
         self.name = name
         self.hp = hp
         self.mp = mp

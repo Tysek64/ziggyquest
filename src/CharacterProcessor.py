@@ -54,13 +54,21 @@ class CharacterProcessor(PacketProcessor):
                 self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage))
                 self.character_state.damage = 0
             elif packet.payload[0] == Command.QUERY:
-                reply_packet = Packet.generate_packet(packet.src_net, 0)
-                reply_packet.payload = (Command.REPLY, None, 
-                                        self.base_character.name if packet.payload[1] == Variable.NAME else
-                                        self.character_state if packet.payload[1] == Variable.STATS else
-                                        '\n'.join([f'{abl.name}: {abl.cost}' for abl in self.base_character.abilities]))
+                if packet.payload[1] == Variable.ABILITIES:
+                    for abl in self.base_character.abilities:
+                        reply_packet = Packet.generate_packet(packet.src_net, 0)
+                        reply_packet.payload = (Command.REPLY, 
+                                                Variable.ABILITY,
+                                                f'{abl.name}: {abl.cost}')
 
-                reply_packets.append(reply_packet)
+                        reply_packets.append(reply_packet)
+                else:
+                    reply_packet = Packet.generate_packet(packet.src_net, 0)
+                    reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
+                                            self.base_character.name if packet.payload[1] == Variable.NAME else
+                                            self.character_state)
+
+                    reply_packets.append(reply_packet)
             elif packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):
                 if packet.payload[1] in self.attr_map:
                     attr_name, minimum, maximum = self.attr_map[packet.payload[1]]

@@ -35,6 +35,9 @@ class Variable(Flag):
     STATS = auto()     # for querying stats
     NAME = auto()      # for querying name
 
+    CHARACTER = auto() # for querying character id
+    ABILITY = auto()   # for querying ability id
+
 class Value(Enum):
     DEFAULT = auto()
     CURRENT = auto()

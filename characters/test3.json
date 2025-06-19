@@ -1,0 +1,36 @@
+{
+	"checksum":		"0x7553294435764788932647382",
+	"image":	"https://pti.org.pl/wp-content/uploads/2019/04/Mazur-Zygmunt-foto-na-www_kwadr.jpg",
+	"name":	"Ziggy Ruzman",
+	"HP":	50,
+	"MP":	10,
+	"attack":	2,
+	"defense":	2,
+	"speed":	20,
+	"abilities": [
+		{
+			"name":	"attack",
+			"cost":	0,
+			"trigger":	null,
+			"packets":	[["opponent", "player_unicast", "set", "damage", "default"]]
+		},
+		{
+			"name":	"heal",
+			"cost":	5,
+			"trigger":	null,
+			"packets":	[["me", "broadcast", "increase", "HP", 10]]
+		},
+		{
+			"name":	"bomb",
+			"cost":	3,
+			"trigger":	[null, null],
+			"packets":	[["me", "self_unicast", "increase", "damage", 25]]
+		},
+		{
+			"name":	"deflect",
+			"cost":	10,
+			"trigger":	[null, "damage"],
+			"packets":	[["me", "player_unicast", "increase", "damage", "current"], ["me", "self_unicast", "set", "damage", 0]]
+		}
+	]
+}

@@ -1,7 +1,7 @@
 from Connection import Connection
 from Inteface import Interface
 from Packet import Packet
-from PacketEnums import Target, Command, Team
+from PacketEnums import Target, Command, Team, Variable
 import random
 from NetInfo import NetInfo
 from NetDevice import NetDevice
@@ -62,7 +62,7 @@ class Switch(NetDevice):
             self.packet_queue.append(packet)
 
             query_packet = Packet(id=None, src_net=self.net_info.net_addr, dst_net=0,
-                                  dst_host=packet.src_net, payload=(Command.QUERY, None, 'Input target ID: '))
+                                  dst_host=packet.src_net, payload=(Command.QUERY, Variable.CHARACTER, 'Input target ID: '))
             self.router.send_packet(query_packet, sender=self)
         elif packet.dst_host == Target.TARGET_UNICAST:
             raise ValueError('Switch received packet destined to a specific host, without the host address')

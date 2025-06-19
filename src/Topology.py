@@ -1,108 +1,28 @@
 from CharacterParser import CharacterFactory
 from CharacterProcessor import CharacterProcessor
-from Connection import Connection
 from Host import Host
-from Inteface import Interface
 from NetInfo import NetInfo
-from PacketEnums import Target, Command
 from PlayerProcessor import PlayerProcessor
-from Router import Router
 from Switch import Switch
 from pathlib import Path
+from Battle import Battle
 
 if __name__ == '__main__':
     character = CharacterFactory().make_characters(Path('./characters'))[0]
 
-    mainRouter = Router(NetInfo(-1, 0), 'net0.router')
+    arena = Battle()
 
-    sw1 = Switch(NetInfo(1, 0), 'net1.switch')
-    sw2 = Switch(NetInfo(2, 0), 'net2.switch')
-    sw0 = Switch(NetInfo(0, 0), 'net0.switch')
+    arena.add_switch(Switch(NetInfo(1, 0), 'net1.switch'))
+    arena.add_switch(Switch(NetInfo(2, 0), 'net2.switch'))
+    arena.add_switch(Switch(NetInfo(0, 0), 'net0.switch'))
 
-    h11 = Host(NetInfo(1, 1), 'net1.host1', CharacterProcessor(character))
-    h12 = Host(NetInfo(1, 2), 'net1.host2', CharacterProcessor(character))
-    h21 = Host(NetInfo(2, 1), 'net2.host1', CharacterProcessor(character))
-    h22 = Host(NetInfo(2, 2), 'net2.host2', CharacterProcessor(character))
+    arena.add_host(Host(NetInfo(1, 1), 'net1.host1', CharacterProcessor(character)))
+    arena.add_host(Host(NetInfo(1, 2), 'net1.host2', CharacterProcessor(character)))
+    arena.add_host(Host(NetInfo(2, 1), 'net2.host1', CharacterProcessor(character)))
+    arena.add_host(Host(NetInfo(2, 2), 'net2.host2', CharacterProcessor(character)))
 
-    p1 = Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor())
-    p2 = Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor())
-
-    rs1con = Connection(mainRouter, sw1)
-    rs2con = Connection(mainRouter, sw2)
-    rs0con = Connection(mainRouter, sw0)
-
-    h1s1con = Connection(sw1, h11)
-    h2s1con = Connection(sw1, h12)
-    h1s2con = Connection(sw2, h21)
-    h2s2con = Connection(sw2, h22)
-
-    p1s0con = Connection(sw0, p1)
-    p2s0con = Connection(sw0, p2)
-
-    mainRouter.add_interface(Interface(NetInfo(1, 0), rs1con))
-    mainRouter.add_interface(Interface(NetInfo(2, 0), rs2con))
-    mainRouter.add_interface(Interface(NetInfo(0, 0), rs0con))
-
-    sw1.connect_router(Interface(NetInfo(0, 0), rs1con))
-    sw2.connect_router(Interface(NetInfo(0, 0), rs2con))
-    sw0.connect_router(Interface(NetInfo(0, 0), rs0con))
-
-    sw1.add_interface(Interface(NetInfo(1, 1), h1s1con))
-    sw1.add_interface(Interface(NetInfo(1, 2), h2s1con))
-    sw2.add_interface(Interface(NetInfo(2, 1), h1s2con))
-    sw2.add_interface(Interface(NetInfo(2, 2), h2s2con))
-    sw0.add_interface(Interface(NetInfo(0, 1), p1s0con))
-    sw0.add_interface(Interface(NetInfo(0, 2), p2s0con))
-
-    h11.connect_interface(Interface(NetInfo(1, 0), h1s1con))
-    h12.connect_interface(Interface(NetInfo(1, 0), h2s1con))
-    h21.connect_interface(Interface(NetInfo(2, 0), h1s2con))
-    h22.connect_interface(Interface(NetInfo(2, 0), h2s2con))
-
-    p1.connect_interface(Interface(NetInfo(0, 0), p1s0con))
-    p2.connect_interface(Interface(NetInfo(0, 0), p2s0con))
+    arena.add_host(Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor()))
+    arena.add_host(Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor()))
 
     for i in range(10):
-        mainRouter.handshake()
-
-    ''' 
-    print('=== ROUTED TARGET UNICAST TEST ===')
-    packet = h11.generate_packet(2, 2)
-    h11.send_packet(packet)
-
-    print('\n=== SELF TARGET UNICAST TEST ===')
-    packet = h11.generate_packet(1, 2)
-    h11.send_packet(packet)
-
-    print('\n=== ROUTED SELF UNICAST TEST ===')
-    packet = h11.generate_packet(2, Target.SELF_UNICAST)
-    h11.send_packet(packet)
-
-    print('\n=== SELF SELF UNICAST TEST ===')
-    packet = h11.generate_packet(1, Target.SELF_UNICAST)
-    h11.send_packet(packet)
-
-    print('\n=== ROUTED BROADCAST TEST ===')
-    packet = h12.generate_packet(2, Target.BROADCAST)
-    h12.send_packet(packet)
-
-    print('\n=== SELF BROADCAST TEST ===')
-    packet = h12.generate_packet(1, Target.BROADCAST)
-    h12.send_packet(packet)
-
-    print('\n=== ROUTED RANDOM UNICAST TEST ===')
-    packet = h11.generate_packet(2, Target.RANDOM_UNICAST)
-    h11.send_packet(packet)
-
-    print('\n=== SELF RANDOM UNICAST TEST ===')
-    packet = h22.generate_packet(2, Target.RANDOM_UNICAST)
-    h22.send_packet(packet)
-
-    print('\n=== ROUTED PLAYER UNICAST TEST ===')
-    packet = h11.generate_packet(2, Target.PLAYER_UNICAST)
-    h11.send_packet(packet)
-
-    print('\n=== SELF PLAYER UNICAST TEST ===')
-    packet = h21.generate_packet(2, Target.PLAYER_UNICAST)
-    h21.send_packet(packet)
-    '''
+        arena.mainRouter.handshake()
