@@ -1,2 +1,2 @@
 X_SIZE = 1280
-Y_SIZE = 720
+Y_SIZE = 1000

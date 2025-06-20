@@ -3,8 +3,6 @@ from CharacterProcessor import CharacterProcessor
 from Packet import Packet
 from typing import Callable
 from PacketEnums import Command, Variable
-import asyncio
-from GUI.CharacterCard import AbilityCard
 
 def register_player(manager):
     def wrapper(player_creator: Callable[None, PlayerProcessor]):
@@ -38,8 +36,7 @@ def register_character(manager):
                 for res_packet in result:
                     if res_packet.payload[0] == Command.REPLY:
                         if res_packet.payload[1] == Variable.ABILITY:
-                            context = manager.cards[0][1].ctx
-                            manager.abilities.append((None, AbilityCard(context, res_packet.payload[2])))
+                            manager.create_ability(res_packet.payload[2])
                 return result
             character = character_creator(*args, **kwargs)
             character._old_process_packet = character.process_packet
