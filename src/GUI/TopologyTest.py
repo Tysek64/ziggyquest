@@ -15,18 +15,14 @@ from src.GUI.SurfaceRenderer import SurfaceRenderer
 from multiprocessing import Process
 from threading import Thread
 
-def setup_game(rs1con_drawable, rs2con_drawable, rs0con_drawable):
+def setup_game(drawables):
     game = GameManager(1000, 800)
     game.setup_game()
     renderers = [
         SurfaceRenderer(pygame.display.get_surface())
     ]
 
-    render_objects = [
-        (rs1con_drawable, {}),
-        (rs2con_drawable, {}),
-        (rs0con_drawable, {})
-    ]
+    render_objects = [(con, {}) for con in drawables]
     for renderer in renderers:
         for render_object in render_objects:
             renderer.register(render_object)
@@ -36,7 +32,7 @@ def setup_game(rs1con_drawable, rs2con_drawable, rs0con_drawable):
 
 if __name__ == '__main__':
     print(Path('../characters').absolute())
-    character = CharacterFactory().make_characters(Path('../characters'))[0]
+    character = CharacterFactory().make_characters(Path('./characters'))[0]
 
     mainRouter = Router(NetInfo(-1, 0), 'net0.router')
 
@@ -52,20 +48,33 @@ if __name__ == '__main__':
     p1 = Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor())
     p2 = Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor())
 
+    drawables = []
+
     rs1con = Connection(mainRouter, sw1)
-    rs1con_drawable = ConnectionDrawable((500, 500), (326, 400))
+    rs1con_drawable = ConnectionDrawable((500, 400), (326, 300))
     rs1con_drawable.connect(rs1con)
+    drawables.append(rs1con_drawable)
 
     rs2con = Connection(mainRouter, sw2)
-    rs2con_drawable = ConnectionDrawable((500, 500), (673, 400))
+    rs2con_drawable = ConnectionDrawable((500, 400), (673, 300))
     rs2con_drawable.connect(rs2con)
+    drawables.append(rs2con_drawable)
 
     rs0con = Connection(mainRouter, sw0)
-    rs0con_drawable = ConnectionDrawable((500, 500), (500, 700))
+    rs0con_drawable = ConnectionDrawable((500, 400), (500, 600))
     rs0con_drawable.connect(rs0con)
+    drawables.append(rs0con_drawable)
 
-    h1s1con = Connection(sw1, h11)
-    h2s1con = Connection(sw1, h12)
+    h1s1con = Connection(h11, sw1)
+    h1s1con_drawable = ConnectionDrawable((200, 350), (326, 300))
+    h1s1con_drawable.connect(h1s1con)
+    drawables.append(h1s1con_drawable)
+
+    h2s1con = Connection(h12, sw1)
+    h2s1con_drawable = ConnectionDrawable((200, 250), (326, 300))
+    h2s1con_drawable.connect(h2s1con)
+    drawables.append(h2s1con_drawable)
+
     h1s2con = Connection(sw2, h21)
     h2s2con = Connection(sw2, h22)
 
@@ -99,7 +108,7 @@ if __name__ == '__main__':
 
 
 
-    gui_thread = Thread(target=setup_game, args=(rs1con_drawable, rs2con_drawable, rs0con_drawable))
+    gui_thread = Thread(target=setup_game, args=[drawables])
     gui_thread.start()
     for i in range(10):
         mainRouter.handshake()

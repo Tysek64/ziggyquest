@@ -1,9 +1,9 @@
-from .Inteface import Interface
-from .Packet import Packet
-from .PacketEnums import Target, Command, Team
+from src.backend.Inteface import Interface
+from src.backend.Packet import Packet
+from src.backend.PacketEnums import Target, Command, Team
 import random
-from .NetInfo import NetInfo
-from .NetDevice import NetDevice
+from src.backend.NetInfo import NetInfo
+from src.backend.NetDevice import NetDevice
 
 class Switch(NetDevice):
     def __init__(self, net_info: NetInfo, hostname=None):

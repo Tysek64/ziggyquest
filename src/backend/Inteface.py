@@ -1,6 +1,6 @@
-from .Packet import Packet
-from .Connection import Connection
-from .NetInfo import NetInfo
+from src.backend.Packet import Packet
+from src.backend.Connection import Connection
+from src.backend.NetInfo import NetInfo
 
 class Interface:
     def __init__(self, address: NetInfo, connection: Connection) -> None:

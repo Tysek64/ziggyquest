@@ -10,20 +10,34 @@ from pathlib import Path
 from functools import wraps
 from time import sleep
 import numpy as np
-
+from src.backend.Packet import Packet
+from src.backend.PacketEnums import Command
 class ConnectionDrawable(Drawable):
 
     def __init__(self, begin: tuple[int, int], end: tuple[int, int]):
         self.line = Line(begin, end)
         self.monitored_connection = None
-        self.simulation_speed = 3
+        self.simulation_speed = 15
         self.max_tick = 255
         self.current_tick = 0
 
+
         self.packet_img = None
         self.traverse_time = self.max_tick / self.simulation_speed
+        self._sleep_time = self.traverse_time / 18
         self.send_vector = np.array([float(end[0] - begin[0]), float(end[1] - begin[1])]) / self.traverse_time
         self.current_vector = np.array([0.,0.])
+
+        self.image_paths = {
+            Command.SET: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/set_packet.png'),
+            Command.INCREASE: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/increase_packet.png'),
+            Command.DECREASE: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/decrease_packet.png'),
+            Command.EXECUTE: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/execute_packet.png'),
+            Command.NO_REMAIN: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/no_remain_packet.png'),
+            Command.END_TURN: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/end_turn_packet.png'),
+            Command.QUERY: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/query_packet.png'),
+            Command.REPLY: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/reply_packet.png')
+        }
 
     def connect(self, connection: Connection):
 
@@ -31,18 +45,18 @@ class ConnectionDrawable(Drawable):
         @wraps(old_fun)
         def wrapper(sender, packet):
             self.notify(sender, packet)
-            sleep(5)
+            sleep(self._sleep_time)
             old_fun(sender, packet)
 
         connection.transfer_packet = wrapper
 
         self.monitored_connection = connection
 
-    def notify(self, sender, packet):
+    def notify(self, sender, packet: Packet):
         self.current_tick = 255
-        self.packet_img = ImageDrawable(Path('D:/python_laby/ziggyquest/src/GUI/resources/packet.png'),
-                                        position=self.line.start_pos)
-        self.packet_img.background_color = pygame.Color(0,0,255)
+        packet_type = packet.payload[0]
+
+        self.packet_img = ImageDrawable(self.image_paths[packet_type], position=self.line.start_pos)
         if sender is self.monitored_connection.begin:
             self.packet_img.position = self.line.start_pos
             self.current_vector = self.send_vector

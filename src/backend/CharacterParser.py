@@ -5,8 +5,8 @@ import os
 from json import JSONDecodeError
 from pathlib import Path
 
-from .Ability import Ability
-from .PacketEnums import Command, Team, Variable, Target, Value
+from src.backend.Ability import Ability
+from src.backend.PacketEnums import Command, Team, Variable, Target, Value
 
 class CharacterFactory:
     def make_characters(self, dir_path: Path) -> list:

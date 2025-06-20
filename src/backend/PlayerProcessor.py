@@ -1,6 +1,6 @@
-from .PacketProcessor import PacketProcessor
-from .Packet import Packet
-from .PacketEnums import Command
+from src.backend.PacketProcessor import PacketProcessor
+from src.backend.Packet import Packet
+from src.backend.PacketEnums import Command
 
 class PlayerProcessor(PacketProcessor):
     def process_packet(self, packet: Packet) -> list[Packet]:

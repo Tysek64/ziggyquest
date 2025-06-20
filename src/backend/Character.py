@@ -1,5 +1,5 @@
 
-from .Ability import Ability
+from src.backend.Ability import Ability
 
 class Character:
     def __init__(self, checksum: int, img_link: str, name: str, hp: int,

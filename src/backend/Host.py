@@ -1,9 +1,9 @@
-from .Inteface import Interface
-from .Packet import Packet
-from .PacketEnums import Command, Target, Team
-from .NetDevice import NetDevice
-from .NetInfo import NetInfo
-from .PacketProcessor import PacketProcessor
+from src.backend.Inteface import Interface
+from src.backend.Packet import Packet
+from src.backend.PacketEnums import Command, Target, Team
+from src.backend.NetDevice import NetDevice
+from src.backend.NetInfo import NetInfo
+from src.backend.PacketProcessor import PacketProcessor
 
 class Host(NetDevice):
     def __init__(self, net_info: NetInfo, hostname = None, processor: PacketProcessor = None):
