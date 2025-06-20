@@ -2,7 +2,7 @@ import pygame.draw
 import pygame
 import urllib.request
 import io
-import gui.GUIInput
+import GUI.GUIInput
 
 class CharacterCard:
     def __init__(self, context, team, index, followed_processor):
@@ -21,7 +21,7 @@ class CharacterCard:
             print(f'Profile pic for {self.processor.base_character.name} has already been fetched!')
 
     def draw(self, x, y):
-        card_rect = pygame.draw.rect(self.ctx, 'lightpink1' if gui.GUIInput.active_team == self.team else 'ivory4' , pygame.Rect(x, y, 200, 300))
+        card_rect = pygame.draw.rect(self.ctx, 'lightpink1' if GUI.GUIInput.active_team == self.team else 'ivory4' , pygame.Rect(x, y, 200, 300))
         font = pygame.font.SysFont('monospace', 24)
 
         label = font.render(self.processor.character_state.name, 1, 'black')

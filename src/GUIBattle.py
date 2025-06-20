@@ -1,5 +1,5 @@
 from Battle import Battle
-from gui.CharacterCard import CharacterCard
+from GUI.CharacterCard import CharacterCard
 import pygame
 from CharacterParser import CharacterFactory
 from CharacterProcessor import CharacterProcessor
@@ -9,8 +9,8 @@ from PlayerProcessor import PlayerProcessor
 from Switch import Switch
 from pathlib import Path
 from GUIHelper import register_player, register_character
-from gui.GUISettings import X_SIZE, Y_SIZE
-import gui.GUIInput
+from GUI.GUISettings import X_SIZE, Y_SIZE
+import GUI.GUIInput
 import threading
 
 def setup_battle():
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     running = True
 
     arena = setup_battle()
-    gui.GUIInput.cards = [(None, CharacterCard(screen, host.net_info.net_addr, host.net_info.host_addr, host.packet_processor)) for host in arena.hosts.values() if isinstance(host.packet_processor, CharacterProcessor)]
+    GUI.GUIInput.cards = [(None, CharacterCard(screen, host.net_info.net_addr, host.net_info.host_addr, host.packet_processor)) for host in arena.hosts.values() if isinstance(host.packet_processor, CharacterProcessor)]
 
     while running:
         for event in pygame.event.get():
@@ -58,17 +58,17 @@ if __name__ == '__main__':
 
         screen.fill('ivory3')
 
-        team_counters = {card.team: 0 for _, card in gui.GUIInput.cards}
+        team_counters = {card.team: 0 for _, card in GUI.GUIInput.cards}
 
-        for i, (_, card) in enumerate(gui.GUIInput.cards):
+        for i, (_, card) in enumerate(GUI.GUIInput.cards):
             card_rect = card.draw(100 if card.team == 1 else X_SIZE - 300, 50 + 350 * team_counters[card.team])
             team_counters[card.team] += 1
 
-            gui.GUIInput.cards[i] = (card_rect, card)
+            GUI.GUIInput.cards[i] = (card_rect, card)
 
-        for i, (_, ability) in enumerate(gui.GUIInput.abilities):
-            card_rect = ability.draw(X_SIZE / 2 - 250, Y_SIZE / 2 - (len(gui.GUIInput.abilities) / 2) * 75 + i * 75)
-            gui.GUIInput.abilities[i] = (card_rect, ability)
+        for i, (_, ability) in enumerate(GUI.GUIInput.abilities):
+            card_rect = ability.draw(X_SIZE / 2 - 250, Y_SIZE / 2 - (len(GUI.GUIInput.abilities) / 2) * 75 + i * 75)
+            GUI.GUIInput.abilities[i] = (card_rect, ability)
 
         pygame.display.flip()
 
