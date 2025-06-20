@@ -1,7 +1,6 @@
-from abc import abstractclassmethod
-from Packet import Packet
-from Connection import Connection
-from NetInfo import NetInfo
+from .Packet import Packet
+from .Connection import Connection
+from .NetInfo import NetInfo
 
 class Interface:
     def __init__(self, address: NetInfo, connection: Connection) -> None:

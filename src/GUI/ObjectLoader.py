@@ -1,6 +1,9 @@
 import pygame
 import math
 from wrappers import *
+from drawables.ImageDrawable import ImageDrawable
+
+from pathlib import Path
 class ObjectLoader:
     def __init__(self):
         pass
@@ -29,4 +32,7 @@ class ObjectLoader:
             (AALines([(300, 300), (400, 250), (500, 300)], True), {
                 'color': pygame.Color(0, 255, 0),
             }),
+
+            (ImageDrawable(Path('D:/python_laby/ziggyquest/src/GUI/resources/Host.jpg'),
+                           (250, 250), (100, 100)), {})
         ]

@@ -1,7 +1,5 @@
-from Connection import Connection
-from Packet import Packet
-from PacketEnums import Target, Command, Team, Value
-from Ability import Ability
+
+from .Ability import Ability
 
 class Character:
     def __init__(self, checksum: int, img_link: str, name: str, hp: int,

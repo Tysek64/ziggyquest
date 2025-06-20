@@ -1,10 +1,9 @@
-from Connection import Connection
-from Inteface import Interface
-from Packet import Packet
-from PacketEnums import Target, Command, Team
+from .Inteface import Interface
+from .Packet import Packet
+from .PacketEnums import Target, Command, Team
 import random
-from NetInfo import NetInfo
-from NetDevice import NetDevice
+from .NetInfo import NetInfo
+from .NetDevice import NetDevice
 
 class Switch(NetDevice):
     def __init__(self, net_info: NetInfo, hostname=None):

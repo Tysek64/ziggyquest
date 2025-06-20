@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABCMeta
-from Packet import Packet
+from .Packet import Packet
 
 class PacketProcessor(metaclass=ABCMeta):
     @abstractmethod

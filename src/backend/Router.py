@@ -1,9 +1,8 @@
-from Packet import Packet
-from PacketEnums import Command, Target, Variable
-from Connection import Connection
-from Inteface import Interface
-from NetDevice import NetDevice
-from NetInfo import NetInfo
+from .Packet import Packet
+from .PacketEnums import Command, Target, Variable
+from .Inteface import Interface
+from .NetDevice import NetDevice
+from .NetInfo import NetInfo
 
 class Router(NetDevice):
     def __init__(self, net_info: NetInfo, hostname: str | None = None):

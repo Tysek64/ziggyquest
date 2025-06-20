@@ -1,10 +1,9 @@
-from Connection import Connection
-from Inteface import Interface
-from Packet import Packet
-from PacketEnums import Command, Target, Team
-from NetDevice import NetDevice
-from NetInfo import NetInfo
-from PacketProcessor import PacketProcessor
+from .Inteface import Interface
+from .Packet import Packet
+from .PacketEnums import Command, Target, Team
+from .NetDevice import NetDevice
+from .NetInfo import NetInfo
+from .PacketProcessor import PacketProcessor
 
 class Host(NetDevice):
     def __init__(self, net_info: NetInfo, hostname = None, processor: PacketProcessor = None):

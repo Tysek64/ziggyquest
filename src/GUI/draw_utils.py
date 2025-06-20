@@ -1,5 +1,7 @@
 from functools import singledispatch
-from wrappers import *
+
+from src.GUI.drawables.Drawable import Drawable
+from src.GUI.wrappers import *
 
 def auto_draw(surface: pygame.Surface,
               drawable, *args, **kwargs) -> None:
@@ -8,7 +10,7 @@ def auto_draw(surface: pygame.Surface,
 
 @singledispatch
 def _drawing_dispatch(drawable, surface, *args, **kwargs):
-    print(f'error, arg: {drawable}')
+    print(drawable)
     raise NotImplemented()
 
 @_drawing_dispatch.register(pygame.Rect)
@@ -46,3 +48,7 @@ def _(aaline, surface, *args, **kwargs):
 @_drawing_dispatch.register(Lines)
 def _(aalines, surface, *args, **kwargs):
     pygame.draw.aalines(*args, **kwargs | aalines.to_dict(), surface=surface)
+
+@_drawing_dispatch.register(Drawable)
+def _(drawable, surface, *args, **kwargs):
+    drawable.draw(surface, *args, **kwargs)

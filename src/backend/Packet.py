@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from PacketEnums import Target, Command, Variable, Value, Team
+from .PacketEnums import Target, Command, Variable, Value, Team
 
 
 
