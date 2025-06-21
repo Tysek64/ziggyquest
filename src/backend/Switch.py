@@ -3,7 +3,7 @@ from src.backend.Inteface import Interface
 from src.backend.NetDevice import NetDevice
 from src.backend.NetInfo import NetInfo
 from src.backend.Packet import Packet
-from src.backend.PacketEnums import Target, Command, Team
+from src.backend.PacketEnums import Target, Command, Team, Variable
 import random
 
 class Switch(NetDevice):

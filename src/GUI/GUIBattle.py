@@ -1,13 +1,13 @@
 from pathlib import Path
-from src.Battle import Battle
-from src.CharacterParser import CharacterFactory
-from src.CharacterProcessor import CharacterProcessor
+from src.backend.Battle import Battle
+from src.backend.CharacterParser import CharacterFactory
+from src.backend.CharacterProcessor import CharacterProcessor
 from src.GUI.CharacterCard import CharacterCard, AbilityCard
 from src.GUI.GUIHelper import register_player, register_character
-from src.Host import Host
-from src.NetInfo import NetInfo
-from src.PlayerProcessor import PlayerProcessor
-from src.Switch import Switch
+from src.backend.Host import Host
+from src.backend.NetInfo import NetInfo
+from src.backend.PlayerProcessor import PlayerProcessor
+from src.backend.Switch import Switch
 import pygame
 import sys
 import threading
