@@ -1,11 +1,11 @@
-from CharacterParser import CharacterFactory
-from CharacterProcessor import CharacterProcessor
-from Host import Host
-from NetInfo import NetInfo
-from PlayerProcessor import PlayerProcessor
-from Switch import Switch
+from src.backend.CharacterParser import CharacterFactory
+from src.backend.CharacterProcessor import CharacterProcessor
+from src.backend.Host import Host
+from src.backend.NetInfo import NetInfo
+from src.backend.PlayerProcessor import PlayerProcessor
+from src.backend.Switch import Switch
 from pathlib import Path
-from Battle import Battle
+from src.backend.Battle import Battle
 
 if __name__ == '__main__':
     character = CharacterFactory().make_characters(Path('./characters'))[0]

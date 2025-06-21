@@ -24,12 +24,12 @@ class GUIBattleManager:
         self.clock = None
         self.screen = None
 
-    def check_for_click(self, rects):
+    def check_for_click(self, rects, filters):
         while True:
             events = pygame.event.get(pygame.MOUSEBUTTONDOWN, pump=False)
             for event in events:
                 pos = pygame.mouse.get_pos()
-                for i, (rect, _) in enumerate(rects):
+                for i, (rect, _) in enumerate(filter(filters, rects)):
                     if rect.collidepoint(pos):
                         return i
             pygame.time.delay(100)
@@ -39,13 +39,13 @@ class GUIBattleManager:
         while self.cards[-1][0] is None:
             pygame.time.delay(100)
 
-        return 1 + self.check_for_click([(rect, card) for rect, card in self.cards if card.team == self.active_team])
+        return 1 + self.check_for_click(self.cards, lambda card: card[1].team == self.active_team)
 
     def get_selected_ability(self):
         while self.abilities[-1][0] is None:
             pygame.time.delay(100)
 
-        result = self.check_for_click(self.abilities)
+        result = self.check_for_click(self.abilities, lambda _: True)
         self.abilities = []
         return result
 
@@ -101,13 +101,25 @@ class GUIBattleManager:
         self.screen.fill('ivory3')
 
         team_counters = {card.team: 0 for _, card in self.cards}
+        team_remainders = [length % 3 for length in self.team_lens]
+
+        safe_zone_height = self.height / 3
+        card_height = safe_zone_height - 40
+        card_width = 2 * card_height / 3
+        safe_zone_width = card_width + 40
 
         for i, (_, card) in enumerate(self.cards):
-            safe_zone_height = self.height / self.team_lens[card.team - 1]
-            card_height = safe_zone_height - 40
-            card_width = 2 * card_height / 3
+            row_number = team_counters[card.team] // 3
+            index_in_row = team_counters[card.team] % 3
 
-            card_rect = card.draw(self.screen, 100 if card.team == 1 else self.width - 100 - card_width, 20 + safe_zone_height * team_counters[card.team], card.team == self.active_team, card_height)
+            in_last_row = self.team_lens[card.team - 1] - 3 * row_number == team_remainders[card.team - 1]
+
+            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
+
+            x_pos = safe_zone_width * row_number
+            y_pos = 20 + safe_zone_height * index_in_row
+
+            card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
             self.cards[i] = (card_rect, card)
 
             team_counters[card.team] += 1
@@ -124,7 +136,7 @@ if __name__ == '__main__':
     [ziggy, kibel, cofee] = CharacterFactory().make_characters(Path('./characters'))
 
     manager = GUIBattleManager()
-    manager.setup_battle([ziggy, ziggy], [kibel, kibel, kibel])
+    manager.setup_battle([ziggy, cofee], [kibel, kibel, kibel, kibel, kibel, kibel, kibel])
     manager.init_battle()
     manager.run_battle()
     manager.end_battle()

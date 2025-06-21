@@ -16,15 +16,15 @@
 		},
 		{
 			"name":	"heal",
-			"cost":	5,
+			"cost":	12,
 			"trigger":	null,
 			"packets":	[["me", "broadcast", "increase", "HP", 10]]
 		},
 		{
-			"name":	"bomb",
+			"name":	"kill",
 			"cost":	3,
-			"trigger":	[null, null],
-			"packets":	[["me", "self_unicast", "increase", "damage", 25]]
+			"trigger":	null,
+			"packets":	[["opponent", "player_unicast", "set", "HP", 0]]
 		},
 		{
 			"name":	"deflect",
