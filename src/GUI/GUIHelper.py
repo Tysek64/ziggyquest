@@ -1,8 +1,8 @@
-from PlayerProcessor import PlayerProcessor
-from CharacterProcessor import CharacterProcessor
-from Packet import Packet
+from src.PlayerProcessor import PlayerProcessor
+from src.CharacterProcessor import CharacterProcessor
+from src.Packet import Packet
 from typing import Callable
-from PacketEnums import Command, Variable
+from src.PacketEnums import Command, Variable
 
 def register_player(manager):
     def wrapper(player_creator: Callable[None, PlayerProcessor]):

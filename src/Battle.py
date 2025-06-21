@@ -1,9 +1,9 @@
-from Switch import Switch
-from Router import Router
-from Host import Host
-from NetInfo import NetInfo
-from Inteface import Interface
-from Connection import Connection
+from src.Switch import Switch
+from src.Router import Router
+from src.Host import Host
+from src.NetInfo import NetInfo
+from src.Inteface import Interface
+from src.Connection import Connection
 
 class Battle:
     def __init__(self):

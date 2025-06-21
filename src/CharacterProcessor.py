@@ -1,7 +1,7 @@
-from PacketProcessor import PacketProcessor
-from Character import Character
-from Packet import Packet
-from PacketEnums import Command, Variable, Value
+from src.PacketProcessor import PacketProcessor
+from src.Character import Character
+from src.Packet import Packet
+from src.PacketEnums import Command, Variable, Value
 from copy import deepcopy
 
 # holds state and responds to packets

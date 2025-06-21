@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABCMeta
-from Packet import Packet
+from src.Packet import Packet
 
 class NetDevice(metaclass=ABCMeta):
     @abstractmethod
