@@ -14,21 +14,7 @@ import pygame
 from src.GUI.SurfaceRenderer import SurfaceRenderer
 from multiprocessing import Process
 from threading import Thread
-
-def setup_game(drawables):
-    game = GameManager(1000, 800)
-    game.setup_game()
-    renderers = [
-        SurfaceRenderer(pygame.display.get_surface())
-    ]
-
-    render_objects = [(con, {}) for con in drawables]
-    for renderer in renderers:
-        for render_object in render_objects:
-            renderer.register(render_object)
-
-    game.hook_renderers(renderers)
-    game.run_game()
+from src.GUI.tracer_utils import setup_game
 
 if __name__ == '__main__':
     print(Path('../characters').absolute())

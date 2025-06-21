@@ -15,7 +15,8 @@ class CharacterFactory:
 
         for file in os.listdir(dir_path):
             try:
-                characters.append(self.make_character(dir_path / Path(file)))
+                if not os.path.isdir(dir_path / Path(file)):
+                    characters.append(self.make_character(dir_path / Path(file)))
             except JSONDecodeError:
                 print(f'Character from file {file} could not be loaded!')
 

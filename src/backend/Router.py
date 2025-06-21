@@ -42,6 +42,19 @@ class Router(NetDevice):
 
             self.finished_turn = [True for i in self.finished_turn]
 
+    def selection_handshake(self):
+        self.finished_turn = [True for _ in self.finished_turn]
+
+        packet = Packet.generate_packet(1, 1)
+        packet.payload = (Command.QUERY, None, "")
+        self.send_packet(packet)
+
+        packet = Packet.generate_packet(0, self.current_team)
+        packet.payload = (Command.QUERY, Variable.CHARACTER, 'Input character name: ')
+        self.send_packet(packet)
+
+        self.finished_turn = [True for _ in self.finished_turn]
+
     def end_turn(self):
         self.current_move = (False, None, None)
 
