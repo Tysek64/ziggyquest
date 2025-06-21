@@ -15,6 +15,7 @@ class Switch(NetDevice):
         self.packet_queue: list[Packet] = []
 
         self.remaining_nonanswered = 0
+        self.dead_characters = 0
 
     def __str__(self):
         return self.hostname if self.hostname is not None else super.__str__(self)
@@ -43,10 +44,19 @@ class Switch(NetDevice):
                 end_turn_packet.src_net = self.net_info.net_addr
                 end_turn_packet.payload = (Command.NO_REMAIN, None, None)
                 self.receive_packet(end_turn_packet)
+        elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
+            self.dead_characters += 1
+            if self.dead_characters == len(self.ports):
+                print('AAAAAAA')
+                end_game_packet = Packet.generate_packet(-1, 0)
+                end_game_packet.src_net = self.net_info.net_addr
+                end_game_packet.payload = (Command.END_GAME, None, None)
+                self.receive_packet(end_game_packet)
         else:
             raise ValueError(f'Switch {self} received a packet addressed to it, but for what reason, it does not know')
 
     def send_packet(self, packet: Packet):
+        self.dead_characters = 0
         if packet.dst_host == Target.BROADCAST:
             if packet.payload is None or packet.payload[0] != Command.END_TURN:
                 self.remaining_nonanswered += len(self.ports)

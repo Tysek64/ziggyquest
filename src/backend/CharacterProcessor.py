@@ -65,6 +65,11 @@ class CharacterProcessor(PacketProcessor):
             elif packet.payload[0] == Command.END_TURN:
                 self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage))
                 self.character_state.damage = 0
+
+                if self.character_state.hp == 0:
+                    reply_packet = Packet.generate_packet(packet.dst_net, 0)
+                    reply_packet.payload = (Command.END_GAME, None, None)
+                    reply_packets.append(reply_packet)
             elif packet.payload[0] == Command.QUERY:
                 if packet.payload[1] == Variable.ABILITIES:
                     for abl in self.base_character.abilities:

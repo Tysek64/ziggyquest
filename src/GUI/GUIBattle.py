@@ -17,12 +17,14 @@ class GUIBattleManager:
         self.arena = Battle()
         self.cards = []
         self.abilities = []
+        self.clear_abilities = False
         self.active_team = 0
         self.size = self.width, self.height = window_width, window_height
         self.team_lens = (0, 0)
 
         self.clock = None
         self.screen = None
+        self.winner = 0
 
     def check_for_click(self, rects, filters):
         while True:
@@ -46,7 +48,7 @@ class GUIBattleManager:
             pygame.time.delay(100)
 
         result = self.check_for_click(self.abilities, lambda _: True)
-        self.abilities = []
+        self.clear_abilities = True
         return result
 
     def create_ability(self, info):
@@ -88,11 +90,18 @@ class GUIBattleManager:
 
             self.size = self.width, self.height = self.screen.get_width(), self.screen.get_height()
             
-            self.render_battlefield()
+            if self.winner == 0:
+                self.render_battlefield()
 
-            if not self.arena.mainRouter.current_move[0]:
-                thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
-                thread.start()
+                if not self.arena.mainRouter.current_move[0]:
+                    thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
+                    thread.start()
+
+                if self.clear_abilities:
+                    self.abilities = []
+                    self.clear_abilities = False
+            else:
+                self.render_end_screen()
 
             pygame.display.update()
             self.clock.tick(60)
@@ -104,20 +113,18 @@ class GUIBattleManager:
         team_remainders = [length % 3 for length in self.team_lens]
 
         safe_zone_height = self.height / 3
-        card_height = safe_zone_height - 40
+        card_height = max(0, safe_zone_height - 40)
         card_width = 2 * card_height / 3
         safe_zone_width = card_width + 40
 
         for i, (_, card) in enumerate(self.cards):
             row_number = team_counters[card.team] // 3
             index_in_row = team_counters[card.team] % 3
-
             in_last_row = self.team_lens[card.team - 1] - 3 * row_number == team_remainders[card.team - 1]
-
-            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
 
             x_pos = safe_zone_width * row_number
             y_pos = 20 + safe_zone_height * index_in_row
+            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
 
             card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
             self.cards[i] = (card_rect, card)
@@ -128,6 +135,20 @@ class GUIBattleManager:
             card_rect = ability.draw(self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)
             self.abilities[i] = (card_rect, ability)
 
+    def render_end_screen(self):
+        self.screen.fill('black')
+
+        font = pygame.font.SysFont('serif', bold=True, size=72)
+
+        label = font.render(f'Player {self.winner} won!', 1, 'darkgoldenrod')
+        rect = label.get_rect()
+
+        self.screen.blit(label, ((self.width - rect.width) / 2, (self.height - rect.height) / 2))
+
+    def announce_winner(self, winning_team):
+        print(f'Team {winning_team} won!')
+        self.winner = winning_team
+
     def end_battle(self):
         pygame.quit()
         sys.exit()
@@ -136,7 +157,7 @@ if __name__ == '__main__':
     [ziggy, kibel, cofee] = CharacterFactory().make_characters(Path('./characters'))
 
     manager = GUIBattleManager()
-    manager.setup_battle([ziggy, cofee], [kibel, kibel, kibel, kibel, kibel, kibel, kibel])
+    manager.setup_battle([ziggy, cofee], [kibel])
     manager.init_battle()
     manager.run_battle()
     manager.end_battle()

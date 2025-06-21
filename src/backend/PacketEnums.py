@@ -9,6 +9,7 @@ class Command(Flag):
     EXECUTE = auto()   # for packets at turn begin
     NO_REMAIN = auto() # for packets at turn end
     END_TURN = auto()  # for committing the ending of a turn (for characters to handle accumulated damage)
+    END_GAME = auto()  # for signalling the death of a character and the whole team
 
     QUERY = auto()     # for querying user input
     REPLY = auto()     # for transmitting user input

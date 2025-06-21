@@ -50,22 +50,30 @@ class Router(NetDevice):
                 self.end_turn()
         elif packet.payload is not None and packet.payload[0] == Command.FAIL:
             self.current_move = (False, None, None)
-        elif packet.payload is not None and packet.payload[0] == Command.REPLY and packet.src_net != 0:
-            print(packet.payload[2])
-        else:
-            if self.current_move[1] is None:
-                self.current_move = (True, packet.payload[2], None)
-                self.query_ability()
-            elif self.current_move[2] is None:
-                self.current_move = (True, self.current_move[1], packet.payload[2])
-
-                start_turn_packet = Packet.generate_packet(self.current_team, self.current_move[1])
-                start_turn_packet.payload = (Command.EXECUTE, None, self.current_move[2])
-
-                self.finished_turn[self.current_team] = False
-                self.send_packet(start_turn_packet)
+        elif packet.payload is not None and packet.payload[0] == Command.REPLY:
+            if packet.src_net != 0:
+                print(packet.payload[2])
             else:
-                raise ValueError(f'Router {self} received a reply to no asked questions: {packet}')
+                if self.current_move[1] is None:
+                    self.current_move = (True, packet.payload[2], None)
+                    self.query_ability()
+                elif self.current_move[2] is None:
+                    self.current_move = (True, self.current_move[1], packet.payload[2])
+
+                    start_turn_packet = Packet.generate_packet(self.current_team, self.current_move[1])
+                    start_turn_packet.payload = (Command.EXECUTE, None, self.current_move[2])
+
+                    self.finished_turn[self.current_team] = False
+                    self.send_packet(start_turn_packet)
+                else:
+                    raise ValueError(f'Router {self} received a reply to no asked questions: {packet}')
+        elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
+            end_game_packet = Packet.generate_packet(0, packet.src_net)
+            end_game_packet.payload = (Command.END_GAME, None, None)
+
+            self.send_packet(end_game_packet)
+        else:
+            raise ValueError(f'Router {self} received {packet} for some reason')
 
     def send_packet(self, packet: Packet):
         packet.src_net = self.net_info.net_addr
