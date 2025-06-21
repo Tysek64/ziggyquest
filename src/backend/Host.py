@@ -1,10 +1,10 @@
-from src.Connection import Connection
-from src.Inteface import Interface
-from src.Packet import Packet
-from src.PacketEnums import Command, Target, Team
-from src.NetDevice import NetDevice
-from src.NetInfo import NetInfo
-from src.PacketProcessor import PacketProcessor
+from src.backend.Connection import Connection
+from src.backend.Inteface import Interface
+from src.backend.NetDevice import NetDevice
+from src.backend.NetInfo import NetInfo
+from src.backend.Packet import Packet
+from src.backend.PacketEnums import Command, Target, Team
+from src.backend.PacketProcessor import PacketProcessor
 
 class Host(NetDevice):
     def __init__(self, net_info: NetInfo, hostname = None, processor: PacketProcessor = None):

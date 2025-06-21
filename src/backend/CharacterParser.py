@@ -1,12 +1,10 @@
-from src.Character import Character
-import json
-import os
-
 from json import JSONDecodeError
 from pathlib import Path
-
-from src.Ability import Ability
-from src.PacketEnums import Command, Team, Variable, Target, Value
+from src.backend.Ability import Ability
+from src.backend.Character import Character
+from src.backend.PacketEnums import Command, Team, Variable, Target, Value
+import json
+import os
 
 class CharacterFactory:
     def make_characters(self, dir_path: Path) -> list:
@@ -27,7 +25,7 @@ class CharacterFactory:
         if not json_path.exists():
             raise FileNotFoundError()
 
-        with open(json_path, mode='r') as file:
+        with open(json_path, mode='r', encoding='utf-8') as file:
             json_file = json.load(file)
 
         # TODO: zmiana image ze str na image, ladowanie zdjecia bedzie tu

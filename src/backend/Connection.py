@@ -1,4 +1,4 @@
-from src.Packet import Packet
+from src.backend.Packet import Packet
 
 class Connection:
     def __init__(self, begin, end) -> None:

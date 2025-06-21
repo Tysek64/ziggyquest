@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from src.PacketEnums import Variable, Command
+from src.backend.PacketEnums import Variable, Command
 from typing import Optional, Tuple
 
 @dataclass
