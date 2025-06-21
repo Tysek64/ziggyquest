@@ -1,7 +1,7 @@
 import pygame
 import math
-from wrappers import *
-from drawables.ImageDrawable import ImageDrawable
+from src.GUI.wrappers import *
+from src.GUI.drawables.ImageDrawable import ImageDrawable
 
 from pathlib import Path
 class ObjectLoader:

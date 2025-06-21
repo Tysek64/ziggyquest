@@ -1,5 +1,5 @@
 import pygame
-from draw_utils import auto_draw
+from src.GUI.draw_utils import auto_draw
 
 class SurfaceRenderer:
     def __init__(self, surface: pygame.Surface):

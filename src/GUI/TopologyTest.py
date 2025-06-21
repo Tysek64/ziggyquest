@@ -8,7 +8,7 @@ from src.backend.PlayerProcessor import PlayerProcessor
 from src.backend.Router import Router
 from src.backend.Switch import Switch
 from pathlib import Path
-from drawables.ConnectionDrawable import ConnectionDrawable
+from src.GUI.drawables.ConnectionDrawable import ConnectionDrawable
 from src.GUI.GameManager import GameManager
 import pygame
 from src.GUI.SurfaceRenderer import SurfaceRenderer

@@ -29,14 +29,14 @@ class ConnectionDrawable(Drawable):
         self.current_vector = np.array([0.,0.])
 
         self.image_paths = {
-            Command.SET: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/set_packet.png'),
-            Command.INCREASE: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/increase_packet.png'),
-            Command.DECREASE: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/decrease_packet.png'),
-            Command.EXECUTE: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/execute_packet.png'),
-            Command.NO_REMAIN: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/no_remain_packet.png'),
-            Command.END_TURN: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/end_turn_packet.png'),
-            Command.QUERY: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/query_packet.png'),
-            Command.REPLY: Path('D:/python_laby/ziggyques_fix/src/GUI/resources/reply_packet.png')
+            Command.SET: Path('./src/GUI/resources/set_packet.png'),
+            Command.INCREASE: Path('./src/GUI/resources/increase_packet.png'),
+            Command.DECREASE: Path('./src/GUI/resources/decrease_packet.png'),
+            Command.EXECUTE: Path('./src/GUI/resources/execute_packet.png'),
+            Command.NO_REMAIN: Path('./src/GUI/resources/no_remain_packet.png'),
+            Command.END_TURN: Path('./src/GUI/resources/end_turn_packet.png'),
+            Command.QUERY: Path('./src/GUI/resources/query_packet.png'),
+            Command.REPLY: Path('./src/GUI/resources/reply_packet.png')
         }
 
     def connect(self, connection: Connection):

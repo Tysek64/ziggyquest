@@ -1,6 +1,6 @@
 import pygame
-from SurfaceRenderer import SurfaceRenderer
-from ObjectLoader import ObjectLoader
+from src.GUI.SurfaceRenderer import SurfaceRenderer
+from src.GUI.ObjectLoader import ObjectLoader
 from time import sleep
 
 class GameManager:
