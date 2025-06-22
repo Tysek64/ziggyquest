@@ -2,13 +2,15 @@ from abc import ABCMeta, abstractmethod
 from src.backend.NetInfo import NetInfo
 from src.backend.Inteface import Interface
 from src.backend.Packet import Packet
+from src.backend.NetDevice import NetDevice
 
-class BaseRouter(metaclass=ABCMeta):
+class BaseRouter(NetDevice, metaclass=ABCMeta):
     def __init__(self, net_info: NetInfo, hostname: str | None = None):
         self.ports: list[Interface] = []
         self.net_info = net_info
         self.hostname = hostname
         self.finished_turn = []
+        self.current_team = 1
 
     def __str__(self):
         return self.hostname if self.hostname is not None else super.__str__(self)
@@ -23,6 +25,10 @@ class BaseRouter(metaclass=ABCMeta):
 
     @abstractmethod
     def process_packet(self, packet: Packet):
+        pass
+
+    @abstractmethod
+    def handshake(self):
         pass
 
     def send_packet(self, packet: Packet):

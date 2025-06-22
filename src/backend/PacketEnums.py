@@ -38,6 +38,8 @@ class Variable(Flag):
     CHARACTER = auto() # for querying character id
     ABILITY = auto()   # for querying ability id
 
+    TIER = auto() # for querying tier
+
 class Value(Enum):
     DEFAULT = auto()
     CURRENT = auto()

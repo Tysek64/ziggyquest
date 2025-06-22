@@ -1,4 +1,4 @@
-
+from src.GUI.GameManager import GameManager
 from src.backend.SelectionProcessor import SelectorProcessor
 from src.backend.character_utils import load_characters
 from Host import Host
@@ -11,6 +11,8 @@ from src.GUI.drawables.ConnectionDrawable import ConnectionDrawable
 from src.backend.NetInfo import NetInfo
 from src.GUI.drawables.Drawable import Drawable
 from threading import Thread
+from src.backend.SelectionRouter import SelectionRouter
+from src.GUI.StageManager import StageManager, change_to_battle
 # slownik netaddr netinfo
 def register_connections(arena: Battle) -> list[Drawable]:
     connections = arena.connections
@@ -36,10 +38,15 @@ def register_connections(arena: Battle) -> list[Drawable]:
 
 if __name__ == '__main__':
     selection = Battle()
+    stage_manager = StageManager()
+    game_manager = GameManager(stage_manager.pygame_lock, 1000, 800)
+    stage_manager.set_controller(game_manager)
+
 
     character_tier_list, tiers = load_characters(Path('./characters'))
 
     arena = Battle()
+    arena.mainRouter = SelectionRouter(NetInfo(-1,0), 'main_router')
 
     arena.add_switch(Switch(NetInfo(0, 0), 'net0.switch'))
     arena.add_switch(Switch(NetInfo(1, 0), 'net1.switch'))
@@ -47,13 +54,14 @@ if __name__ == '__main__':
     arena.add_host(Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor()))
     arena.add_host(Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor()))
 
-    arena.add_host(Host(NetInfo(1, 1), 'net1.host1',
-                        SelectorProcessor(character_tier_list, tiers)))
+    selector_processor = change_to_battle(stage_manager)(SelectorProcessor(character_tier_list, tiers))
+    arena.add_host(Host(NetInfo(1, 1), 'net1.host1', selector_processor))
 
     drawables = register_connections(arena)
 
-    gui_thread = Thread(target=setup_game, args=[drawables])
+    gui_thread = Thread(target=setup_game, args=[game_manager, drawables])
     gui_thread.start()
-    for _ in range(1):
-        arena.mainRouter.selection_handshake()
+
+    for _ in range(5):
+        arena.mainRouter.handshake()
     gui_thread.join()

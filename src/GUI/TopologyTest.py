@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
 
 
-    gui_thread = Thread(target=setup_game, args=[drawables])
+    gui_thread = Thread(target=setup_game, args=[GameManager(1000, 800), drawables])
     gui_thread.start()
     for i in range(10):
         mainRouter.handshake()

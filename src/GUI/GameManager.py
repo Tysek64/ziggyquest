@@ -2,13 +2,15 @@ import pygame
 from src.GUI.SurfaceRenderer import SurfaceRenderer
 from src.GUI.ObjectLoader import ObjectLoader
 from time import sleep
+import sys
 
 class GameManager:
-    def __init__(self, window_width: int = 640, window_height: int = 400) -> None:
+    def __init__(self, pygame_lock, window_width: int = 640, window_height: int = 400) -> None:
         self.size = self.width, self_height = window_width, window_height
         self.display = None
         self.renderers = None
         self._running = False
+        self.pygame_lock = pygame_lock
 
     def setup_game(self) -> None:
         pygame.init()
@@ -24,22 +26,26 @@ class GameManager:
         if not self._running:
             raise ValueError('Game was not set up (call setup_game)')
 
-        while self._running:
-            sleep(0.05)
-            for event in pygame.event.get():
-                self.process_event(event)
+        with self.pygame_lock:
+            while self._running:
+                sleep(0.05)
+                for event in pygame.event.get():
+                    self.process_event(event)
 
-            pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
-            for renderer in self.renderers:
-                renderer.draw()
+                pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
+                for renderer in self.renderers:
+                    renderer.draw()
 
-            pygame.display.update()
+                pygame.display.update()
 
-        pygame.quit()
+            pygame.quit()
 
     def process_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.QUIT:
             self._running = False
+
+    def close(self):
+        self._running = False
 
 if __name__ == '__main__':
     game = GameManager()

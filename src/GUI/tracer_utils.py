@@ -2,8 +2,7 @@ from src.GUI.GameManager import GameManager
 from src.GUI.SurfaceRenderer import SurfaceRenderer
 import pygame
 
-def setup_game(drawables):
-    game = GameManager(1000, 800)
+def setup_game(game: GameManager, drawables):
     game.setup_game()
     renderers = [
         SurfaceRenderer(pygame.display.get_surface())

@@ -13,7 +13,7 @@ import sys
 import threading
 
 class GUIBattleManager:
-    def __init__(self, window_width=1280, window_height=720):
+    def __init__(self, pygame_lock, window_width=1280, window_height=720):
         self.arena = Battle()
         self.cards = []
         self.abilities = []
@@ -23,6 +23,7 @@ class GUIBattleManager:
 
         self.clock = None
         self.screen = None
+        self.pygame_lock = pygame_lock
 
     def check_for_click(self, rects):
         while True:
@@ -74,28 +75,34 @@ class GUIBattleManager:
         self.team_lens = (len(team_1), len(team_2))
 
     def init_battle(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
-        self.clock = pygame.time.Clock()
-
-        self.cards = [(None, CharacterCard(host.net_info.net_addr, host.net_info.host_addr, host.packet_processor)) for host in self.arena.hosts.values() if isinstance(host.packet_processor, CharacterProcessor)]
+        pass
 
     def run_battle(self):
         running = True
 
-        while running:
-            running = len(pygame.event.get(pygame.QUIT)) == 0
+        with self.pygame_lock:
+            pygame.init()
+            self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+            self.clock = pygame.time.Clock()
 
-            self.size = self.width, self.height = self.screen.get_width(), self.screen.get_height()
-            
-            self.render_battlefield()
+            self.cards = [(None, CharacterCard(host.net_info.net_addr, host.net_info.host_addr, host.packet_processor))
+                          for host in self.arena.hosts.values() if
+                          isinstance(host.packet_processor, CharacterProcessor)]
 
-            if not self.arena.mainRouter.current_move[0]:
-                thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
-                thread.start()
+            while running:
+                running = len(pygame.event.get(pygame.QUIT)) == 0
 
-            pygame.display.update()
-            self.clock.tick(60)
+                self.size = self.width, self.height = self.screen.get_width(), self.screen.get_height()
+
+                self.render_battlefield()
+
+                if not self.arena.mainRouter.current_move[0]:
+                    thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
+                    thread.start()
+
+                pygame.display.update()
+                self.clock.tick(60)
+            self.close()
 
     def render_battlefield(self):
         self.screen.fill('ivory3')
@@ -116,7 +123,7 @@ class GUIBattleManager:
             card_rect = ability.draw(self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)
             self.abilities[i] = (card_rect, ability)
 
-    def end_battle(self):
+    def close(self):
         pygame.quit()
         sys.exit()
 

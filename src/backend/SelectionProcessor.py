@@ -11,20 +11,57 @@ class SelectorProcessor(PacketProcessor):
         self.tier_list = tier_list
         self.teams = {}
 
+        self.max_team_size = 6
+
     def process_packet(self, packet: Packet) -> list[Packet]:
         reply_packets = []
         if packet.payload[0] == Command.QUERY:
-           reply_packet = Packet.generate_packet(packet.src_net, 0)
-           reply_packet.payload = (Command.REPLY, None, self.get_available_characters())
-           reply_packets.append(reply_packet)
+            if packet.payload[1] == Variable.CHARACTER:
+               reply_packet = Packet.generate_packet(packet.src_net, 0)
+               reply_packet.payload = (Command.REPLY, None, self.get_available_characters())
+               reply_packets.append(reply_packet)
+
+            elif packet.payload[1] == Variable.TIER:
+                reply_packet = Packet.generate_packet(packet.src_net, 0)
+                reply_packet.payload = (Command.REPLY, None, self.get_characters_tier(packet.payload[2]))
+                reply_packets.append(reply_packet)
+
+        elif packet.payload[0] == Command.EXECUTE:
+            team, tier, character = packet.payload[2]
+            try:
+                self.teams[team].append(self.character_list[tier][character])
+            except KeyError:
+                self.teams[team] = [self.character_list[tier][character]]
+            self.character_list[tier].pop(character)
+
+        self.notify_change_stage()
         return reply_packets
 
     def get_available_characters(self) -> str:
-
-        msg = "".join([
+        return ''.join([
             f'{tier}: character: {character}\n'
             for tier, character_list in zip(self.tier_list, self.character_list)
                 for character in character_list
         ])
 
-        return msg
+    def get_characters_tier(self, tier: int) -> str:
+        return ''.join([str(character) for character in self.character_list[tier]])
+
+
+    def notify_change_stage(self) -> bool:
+        exit_flag = True
+        for list in self.character_list:
+            if len(list) != 0:
+                exit_flag = False
+
+        if exit_flag: return True
+
+        if len(self.teams.values()) == 0:
+            return False
+
+        for team in self.teams.values():
+            if len(team) < 6:
+                return False
+
+        return True
+

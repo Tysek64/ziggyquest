@@ -17,7 +17,7 @@ class ConnectionDrawable(Drawable):
     def __init__(self, begin: tuple[int, int], end: tuple[int, int]):
         self.line = Line(begin, end)
         self.monitored_connection = None
-        self.simulation_speed = 10
+        self.simulation_speed = 100
         self.max_tick = 255
         self.current_tick = 0
 
