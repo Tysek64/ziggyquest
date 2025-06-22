@@ -28,17 +28,20 @@ def setup_server(ip_addr):
     for i, character in enumerate([ziggy, cofee], start=1):
         arena.add_host(Host(NetInfo(1, i), f'net1.host{i}', CharacterProcessor(character)))
 
-    for i, character in enumerate([kibel], start=1):
+    for i, character in enumerate([kibel, kibel, kibel], start=1):
         arena.add_host(Host(NetInfo(2, i), f'net2.host{i}', CharacterProcessor(character)))
 
     arena.add_host(Host(NetInfo(0, 1), 'net0.player1', ServerSocket(ip_addr=ip_addr)))
     arena.add_host(Host(NetInfo(0, 2), 'net0.player2', create_player()))
 
-    thread = threading.Thread(target=manager.run_battle)
+    def run():
+        while True:
+            arena.mainRouter.handshake()
+
+    thread = threading.Thread(target=run)
     thread.start()
 
-    while True:
-        arena.mainRouter.handshake()
+    manager.run_battle()
 
     manager.close()
     sys.exit()
@@ -54,8 +57,14 @@ def setup_client(ip_addr):
     thread = threading.Thread(target=manager.run_battle)
     thread.start()
 
-    while True:
-        arena.receive_packet()
+    def run():
+        while True:
+            arena.receive_packet()
+
+    thread = threading.Thread(target=run)
+    thread.start()
+
+    manager.run_battle()
 
     manager.close()
     sys.exit()
