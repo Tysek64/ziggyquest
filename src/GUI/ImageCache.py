@@ -7,6 +7,9 @@ class ImageCache:
 
     @classmethod
     def fetch_image(cls, checksum, link):
+        if not os.path.exists(cls.cache_path):
+            os.makedirs(cls.cache_path)
+
         for file in os.listdir(cls.cache_path):
             if str(checksum) == file[:file.index('.')]:
                 with open(cls.cache_path / Path(file), mode='rb') as file:
