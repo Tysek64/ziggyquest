@@ -1,18 +1,15 @@
-from src.backend.CharacterParser import CharacterFactory
-from src.backend.CharacterProcessor import CharacterProcessor
-from src.backend.Connection import Connection
-from src.backend.Host import Host
-from src.backend.Inteface import Interface
+from src.backend.character.CharacterParser import CharacterFactory
+from src.backend.processors.CharacterProcessor import CharacterProcessor
+from src.backend.net_devices.Connection import Connection
+from src.backend.net_devices.Host import Host
+from src.backend.net_devices.Inteface import Interface
 from src.backend.NetInfo import NetInfo
-from src.backend.PlayerProcessor import PlayerProcessor
-from src.backend.Router import Router
-from src.backend.Switch import Switch
+from src.backend.processors.PlayerProcessor import PlayerProcessor
+from src.backend.net_devices.BattleRouter import BattleRouter
+from src.backend.net_devices.Switch import Switch
 from pathlib import Path
 from src.GUI.drawables.ConnectionDrawable import ConnectionDrawable
-from src.GUI.GameManager import GameManager
-import pygame
-from src.GUI.SurfaceRenderer import SurfaceRenderer
-from multiprocessing import Process
+from src.GUI.WindowManager import WindowManager
 from threading import Thread
 from src.GUI.tracer_utils import setup_game
 
@@ -20,7 +17,7 @@ if __name__ == '__main__':
     print(Path('../characters').absolute())
     character = CharacterFactory().make_characters(Path('./characters'))[0]
 
-    mainRouter = Router(NetInfo(-1, 0), 'net0.router')
+    mainRouter = BattleRouter(NetInfo(-1, 0), 'net0.router')
 
     sw1 = Switch(NetInfo(1, 0), 'net1.switch')
     sw2 = Switch(NetInfo(2, 0), 'net2.switch')
@@ -94,7 +91,7 @@ if __name__ == '__main__':
 
 
 
-    gui_thread = Thread(target=setup_game, args=[GameManager(1000, 800), drawables])
+    gui_thread = Thread(target=setup_game, args=[WindowManager(1000, 800), drawables])
     gui_thread.start()
     for i in range(10):
         mainRouter.handshake()

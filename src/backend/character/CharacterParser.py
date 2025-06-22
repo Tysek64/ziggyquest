@@ -1,7 +1,7 @@
 from json import JSONDecodeError
 from pathlib import Path
-from src.backend.Ability import Ability
-from src.backend.Character import Character
+from src.backend.character.Ability import Ability
+from src.backend.character.Character import Character
 from src.backend.PacketEnums import Command, Team, Variable, Target, Value
 import json
 import os

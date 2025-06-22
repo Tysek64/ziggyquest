@@ -1,5 +1,5 @@
 from src.backend.Packet import Packet
-from src.backend.Connection import Connection
+from src.backend.net_devices.Connection import Connection
 from src.backend.NetInfo import NetInfo
 
 class Interface:

@@ -1,18 +1,18 @@
-from src.GUI.GameManager import GameManager
-from src.backend.SelectionProcessor import SelectorProcessor
-from src.backend.character_utils import load_characters
-from src.backend.Host import Host
+from src.GUI.WindowManager import WindowManager
+from src.backend.processors.SelectionProcessor import SelectionProcessor
+from src.backend.character.character_utils import load_characters
+from src.backend.net_devices.Host import Host
 from src.GUI.tracer_utils import setup_game
-from src.backend.PlayerProcessor import PlayerProcessor
-from src.backend.Switch import Switch
+from src.backend.processors.PlayerProcessor import PlayerProcessor
+from src.backend.net_devices.Switch import Switch
 from pathlib import Path
 from src.backend.Battle import Battle
 from src.GUI.drawables.ConnectionDrawable import ConnectionDrawable
 from src.backend.NetInfo import NetInfo
 from src.GUI.drawables.Drawable import Drawable
 from threading import Thread
-from src.backend.SelectionRouter import SelectionRouter
-from src.GUI.StageManager import StageManager, change_to_battle
+from src.backend.net_devices.SelectionRouter import SelectionRouter
+from src.GUI.GameManager import GameManager, change_to_battle
 # slownik netaddr netinfo
 def register_connections(arena: Battle) -> list[Drawable]:
     connections = arena.connections
@@ -38,8 +38,8 @@ def register_connections(arena: Battle) -> list[Drawable]:
 
 if __name__ == '__main__':
     selection = Battle()
-    stage_manager = StageManager()
-    game_manager = GameManager(stage_manager.pygame_lock, 1000, 800)
+    stage_manager = GameManager()
+    game_manager = WindowManager(stage_manager.pygame_lock, 1000, 800)
     stage_manager.set_controller(game_manager)
 
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     arena.add_host(Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor()))
     arena.add_host(Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor()))
 
-    selector_processor = change_to_battle(stage_manager)(SelectorProcessor(character_tier_list, tiers))
+    selector_processor = change_to_battle(stage_manager)(SelectionProcessor(character_tier_list, tiers))
     arena.add_host(Host(NetInfo(1, 1), 'net1.host1', selector_processor))
 
     drawables = register_connections(arena)

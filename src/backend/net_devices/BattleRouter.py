@@ -1,12 +1,12 @@
 
-from src.backend.BaseRouter import BaseRouter
+from src.backend.net_devices.BaseRouter import BaseRouter
 from src.backend.NetInfo import NetInfo
 from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command, Target, Variable
 
 
 # TODO : change class name to something like BattleRouter
-class Router(BaseRouter):
+class BattleRouter(BaseRouter):
     def __init__(self, net_info: NetInfo, hostname: str | None = None):
         super().__init__(net_info, hostname)
         self.current_move = (False, None, None)

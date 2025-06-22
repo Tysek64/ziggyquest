@@ -1,9 +1,9 @@
-from src.backend.CharacterParser import CharacterFactory
-from src.backend.CharacterProcessor import CharacterProcessor
-from src.backend.Host import Host
+from src.backend.character.CharacterParser import CharacterFactory
+from src.backend.processors.CharacterProcessor import CharacterProcessor
+from src.backend.net_devices.Host import Host
 from src.backend.NetInfo import NetInfo
-from src.backend.PlayerProcessor import PlayerProcessor
-from src.backend.Switch import Switch
+from src.backend.processors.PlayerProcessor import PlayerProcessor
+from src.backend.net_devices.Switch import Switch
 from pathlib import Path
 from src.backend.Battle import Battle
 

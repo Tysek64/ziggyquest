@@ -1,8 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from src.backend.NetInfo import NetInfo
-from src.backend.Inteface import Interface
+from src.backend.net_devices.Inteface import Interface
 from src.backend.Packet import Packet
-from src.backend.NetDevice import NetDevice
+from src.backend.net_devices.NetDevice import NetDevice
 
 class BaseRouter(NetDevice, metaclass=ABCMeta):
     def __init__(self, net_info: NetInfo, hostname: str | None = None):

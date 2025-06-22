@@ -1,5 +1,5 @@
-from src.backend.PacketProcessor import PacketProcessor
-from src.backend.Character import Character
+from src.backend.processors.PacketProcessor import PacketProcessor
+from src.backend.character.Character import Character
 from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command, Variable, Value
 from copy import deepcopy

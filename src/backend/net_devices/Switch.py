@@ -1,9 +1,8 @@
-from src.backend.Connection import Connection
-from src.backend.Inteface import Interface
-from src.backend.NetDevice import NetDevice
+from src.backend.net_devices.Inteface import Interface
+from src.backend.net_devices.NetDevice import NetDevice
 from src.backend.NetInfo import NetInfo
 from src.backend.Packet import Packet
-from src.backend.PacketEnums import Target, Command, Team, Variable
+from src.backend.PacketEnums import Target, Command, Variable
 import random
 
 class Switch(NetDevice):

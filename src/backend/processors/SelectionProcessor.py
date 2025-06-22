@@ -1,11 +1,11 @@
 from src.backend.Packet import Packet
-from src.backend.PacketProcessor import PacketProcessor
-from src.backend.Character import Character
+from src.backend.processors.PacketProcessor import PacketProcessor
+from src.backend.character.Character import Character
 from src.backend.PacketEnums import Command, Variable
 from copy import deepcopy
 
 # liste charaketrów z zewnatrz
-class SelectorProcessor(PacketProcessor):
+class SelectionProcessor(PacketProcessor):
     def __init__(self, character_list: list[list[Character]], tier_list: list[str]) -> None:
         self.character_list = deepcopy(character_list)
         self.tier_list = tier_list
@@ -17,14 +17,16 @@ class SelectorProcessor(PacketProcessor):
         reply_packets = []
         if packet.payload[0] == Command.QUERY:
             if packet.payload[1] == Variable.CHARACTER:
-               reply_packet = Packet.generate_packet(packet.src_net, 0)
-               reply_packet.payload = (Command.REPLY, None, self.get_available_characters())
-               reply_packets.append(reply_packet)
+               for character in self.get_available_characters():
+                   reply_packet = Packet.generate_packet(packet.src_net, 0)
+                   reply_packet.payload = (Command.REPLY, Variable.CHARACTER, character)
+                   reply_packets.append(reply_packet)
 
             elif packet.payload[1] == Variable.TIER:
-                reply_packet = Packet.generate_packet(packet.src_net, 0)
-                reply_packet.payload = (Command.REPLY, None, self.get_characters_tier(packet.payload[2]))
-                reply_packets.append(reply_packet)
+                for character in self.get_characters_tier(packet.payload[2]):
+                    reply_packet = Packet.generate_packet(packet.src_net, 0)
+                    reply_packet.payload = (Command.REPLY, Variable.TIER, character)
+                    reply_packets.append(reply_packet)
 
         elif packet.payload[0] == Command.EXECUTE:
             team, tier, character = packet.payload[2]
@@ -37,15 +39,15 @@ class SelectorProcessor(PacketProcessor):
         self.notify_change_stage()
         return reply_packets
 
-    def get_available_characters(self) -> str:
-        return ''.join([
+    def get_available_characters(self) -> list[str]:
+        return [
             f'{tier}: character: {character}\n'
             for tier, character_list in zip(self.tier_list, self.character_list)
                 for character in character_list
-        ])
+        ]
 
-    def get_characters_tier(self, tier: int) -> str:
-        return ''.join([str(character) for character in self.character_list[tier]])
+    def get_characters_tier(self, tier: int) -> list[str]:
+        return [str(character) for character in self.character_list[tier]]
 
 
     def notify_change_stage(self) -> bool:

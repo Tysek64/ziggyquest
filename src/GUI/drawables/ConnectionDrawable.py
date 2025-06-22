@@ -1,6 +1,6 @@
 import pygame
 
-from src.backend.Connection import Connection
+from src.backend.net_devices.Connection import Connection
 from src.GUI.draw_utils import auto_draw
 from src.GUI.drawables.Drawable import Drawable
 

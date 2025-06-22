@@ -1,13 +1,13 @@
 from pathlib import Path
 from src.backend.Battle import Battle
-from src.backend.CharacterParser import CharacterFactory
-from src.backend.CharacterProcessor import CharacterProcessor
+from src.backend.character.CharacterParser import CharacterFactory
+from src.backend.processors.CharacterProcessor import CharacterProcessor
 from src.GUI.CharacterCard import CharacterCard, AbilityCard
 from src.GUI.GUIHelper import register_player, register_character
-from src.backend.Host import Host
+from src.backend.net_devices.Host import Host
 from src.backend.NetInfo import NetInfo
-from src.backend.PlayerProcessor import PlayerProcessor
-from src.backend.Switch import Switch
+from src.backend.processors.PlayerProcessor import PlayerProcessor
+from src.backend.net_devices.Switch import Switch
 import pygame
 import sys
 import threading
@@ -53,7 +53,7 @@ class GUIBattleManager:
         return result
 
     def create_ability(self, info):
-        self.abilities.append((None, AbilityCard(self.screen, info)))
+        self.abilities.append((None, AbilityCard(info)))
 
     def setup_battle(self, team_1, team_2):
         @register_player(self)
@@ -139,7 +139,7 @@ class GUIBattleManager:
             team_counters[card.team] += 1
 
         for i, (_, ability) in enumerate(self.abilities):
-            card_rect = ability.draw(self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)
+            card_rect = ability.draw(self.screen, self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)
             self.abilities[i] = (card_rect, ability)
 
     def render_end_screen(self):

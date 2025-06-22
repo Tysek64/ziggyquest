@@ -52,15 +52,14 @@ class CharacterCard:
         return card_rect
 
 class AbilityCard:
-    def __init__(self, context, info):
-        self.ctx = context
+    def __init__(self, info):
         self.info = info
 
-    def draw(self, x, y):
-        card_rect = pygame.draw.rect(self.ctx, 'lightpink1', pygame.Rect(x, y, 500, 50))
+    def draw(self, ctx, x, y):
+        card_rect = pygame.draw.rect(ctx, 'lightpink1', pygame.Rect(x, y, 500, 50))
         font = pygame.font.SysFont('monospace', 24)
 
         label = font.render(self.info, 1, 'black')
-        self.ctx.blit(label, (x + 10, y + 10))
+        ctx.blit(label, (x + 10, y + 10))
 
         return card_rect

@@ -1,4 +1,4 @@
-from src.backend.BaseRouter import BaseRouter
+from src.backend.net_devices.BaseRouter import BaseRouter
 from src.backend.NetInfo import NetInfo
 from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command, Target, Variable
@@ -20,7 +20,7 @@ class SelectionRouter(BaseRouter):
         self.send_packet(packet)
 
         packet = Packet.generate_packet(0, self.current_team)
-        packet.payload = (Command.QUERY, None, 'Input character tier: ')
+        packet.payload = (Command.QUERY, Variable.TIER, 'Input character tier: ')
         self.send_packet(packet)
 
         self.finished_turn = [True for _ in self.finished_turn]
@@ -52,7 +52,7 @@ class SelectionRouter(BaseRouter):
                 self.send_packet(packet_)
 
                 packet = Packet.generate_packet(0, self.current_team)
-                packet.payload = (Command.QUERY, None, 'Input character ID: ')
+                packet.payload = (Command.QUERY, Variable.CHARACTER, 'Input character ID: ')
                 self.send_packet(packet)
 
 

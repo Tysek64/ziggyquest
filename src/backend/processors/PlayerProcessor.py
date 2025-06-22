@@ -1,4 +1,4 @@
-from src.backend.PacketProcessor import PacketProcessor
+from src.backend.processors.PacketProcessor import PacketProcessor
 from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command
 

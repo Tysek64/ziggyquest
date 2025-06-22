@@ -1,65 +1,48 @@
-import pygame
-from src.GUI.SurfaceRenderer import SurfaceRenderer
-from src.GUI.ObjectLoader import ObjectLoader
-from time import sleep
-import sys
+from enum import Enum, auto
+
+from src.GUI.GUIBattle import GUIBattleManager
+from src.backend.character.Character import Character
+from functools import wraps
+from threading import Lock
+
+class GameStage(Enum):
+    MENU = auto()
+    SELECTION = auto()
+    BATTLE = auto()
+
 
 class GameManager:
-    def __init__(self, pygame_lock, window_width: int = 640, window_height: int = 400) -> None:
-        self.size = self.width, self_height = window_width, window_height
-        self.display = None
-        self.renderers = None
-        self._running = False
-        self.pygame_lock = pygame_lock
+    def __init__(self) -> None:
+        self.current_stage = GameStage.MENU
+        self.pygame_lock = Lock()
+        self.controller_object = None
 
-    def setup_game(self) -> None:
-        pygame.init()
-        pygame.display.set_mode(self.size, pygame.HWSURFACE
-                                | pygame.DOUBLEBUF)
-        self._running = True
+    def get_lock(self):
+        return self.pygame_lock
 
-    # renderers must be created after setup_game
-    def hook_renderers(self, renderers: list[SurfaceRenderer]):
-        self.renderers = renderers
+    def set_controller(self, controller_object):
+        self.controller_object = controller_object
 
-    def run_game(self) -> None:
-        if not self._running:
-            raise ValueError('Game was not set up (call setup_game)')
+    # TODO : destroy previous window in a better way
+    def init_battle(self, teams: list[Character]) -> None:
+        self.controller_object.close()
+        self.current_stage = GameStage.BATTLE
+        #pygame.event.post(pygame.event.Event(pygame.QUIT))
+        self.controller_object = GUIBattleManager(self.pygame_lock)
+        self.controller_object.setup_battle(teams[0], teams[1])
+        self.controller_object.init_battle()
+        self.controller_object.run_battle()
+        self.controller_object.close()
 
-        with self.pygame_lock:
-            while self._running:
-                sleep(0.05)
-                for event in pygame.event.get():
-                    self.process_event(event)
-
-                pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
-                for renderer in self.renderers:
-                    renderer.draw()
-
-                pygame.display.update()
-
-            pygame.quit()
-
-    def process_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.QUIT:
-            self._running = False
-
-    def close(self):
-        self._running = False
-
-if __name__ == '__main__':
-    game = GameManager()
-    game.setup_game()
-    renderers = [
-        SurfaceRenderer(pygame.display.get_surface())
-    ]
-
-    render_objects = ObjectLoader().load()
-    for renderer in renderers:
-        for render_object in render_objects:
-            renderer.register(render_object)
-
-    game.hook_renderers(renderers)
-    game.run_game()
-
-
+def change_to_battle(context):
+    def register_(cls):
+        old_fun = cls.notify_change_stage
+        @wraps(old_fun)
+        def inner(*args, **kwargs):
+            if old_fun(*args, **kwargs):
+                print(cls.teams, cls.character_list)
+                context.init_battle(list(cls.teams.values()))
+            return old_fun(*args, **kwargs)
+        cls.notify_change_stage = inner
+        return cls
+    return register_

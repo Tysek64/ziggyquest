@@ -1,7 +1,4 @@
-from src.backend.Connection import Connection
-from src.backend.Packet import Packet
-from src.backend.PacketEnums import Target, Command, Team, Value
-from src.backend.Ability import Ability
+from src.backend.character.Ability import Ability
 
 class Character:
     def __init__(self, checksum: int, img_link: str, name: str, hp: int,

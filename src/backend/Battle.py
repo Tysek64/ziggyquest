@@ -1,13 +1,13 @@
-from src.backend.Switch import Switch
-from src.backend.Router import Router
-from src.backend.Host import Host
+from src.backend.net_devices.Switch import Switch
+from src.backend.net_devices.BattleRouter import BattleRouter
+from src.backend.net_devices.Host import Host
 from src.backend.NetInfo import NetInfo
-from src.backend.Inteface import Interface
-from src.backend.Connection import Connection
+from src.backend.net_devices.Inteface import Interface
+from src.backend.net_devices.Connection import Connection
 
 class Battle:
-    def __init__(self):
-        self.mainRouter = Router(net_info=NetInfo(net_addr=-1, host_addr=0), hostname='router')
+    def __init__(self, router = BattleRouter(net_info=NetInfo(net_addr=-1, host_addr=0), hostname='router')):
+        self.mainRouter = router
 
         self.connections = {}
         self.switches = {}
