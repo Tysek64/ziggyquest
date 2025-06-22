@@ -23,6 +23,7 @@ class Host(NetDevice):
 
     def send_packet(self, packet: Packet):
         packet.src_net = self.net_info.net_addr
+        packet.id = self.net_info.host_addr
         if packet.dst_host == Target.SELF_UNICAST:
             packet.dst_host = self.net_info.host_addr
 

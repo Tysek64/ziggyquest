@@ -15,13 +15,11 @@ import threading
 
 class GUIBattleManager:
     def __init__(self, pygame_lock, window_width=1280, window_height=720):
-        self.arena = Battle()
-        self.cards = []
+        self.cards = [[], []]
         self.abilities = []
         self.clear_abilities = False
-        self.active_team = 0
+        self.active_team = 1
         self.size = self.width, self.height = window_width, window_height
-        self.team_lens = (0, 0)
 
         self.clock = None
         self.screen = None
@@ -40,10 +38,10 @@ class GUIBattleManager:
         return None
 
     def get_selected_card(self):
-        while self.cards[-1][0] is None:
+        while self.cards[-1][-1][0] is None:
             pygame.time.delay(100)
 
-        return 1 + self.check_for_click(self.cards, lambda card: card[1].team == self.active_team)
+        return 1 + self.check_for_click(self.cards[self.active_team - 1], lambda _: True)
 
     def get_selected_ability(self):
         while self.abilities[-1][0] is None:
@@ -56,26 +54,11 @@ class GUIBattleManager:
     def create_ability(self, info):
         self.abilities.append((None, AbilityCard(info)))
 
-    def setup_battle(self, team_1, team_2):
-        @register_player(self)
-        def create_player(): return PlayerProcessor()
-
-        for i in range(3):
-            self.arena.add_switch(Switch(NetInfo(i, 0), f'net{i}.switch'))
-
-        for i, character in enumerate(team_1, start=1):
-            self.arena.add_host(Host(NetInfo(1, i), f'net1.host{i}', CharacterProcessor(character)))
-
-        for i, character in enumerate(team_2, start=1):
-            self.arena.add_host(Host(NetInfo(2, i), f'net2.host{i}', CharacterProcessor(character)))
-
-        self.arena.add_host(Host(NetInfo(0, 1), 'net0.player1', create_player()))
-        self.arena.add_host(Host(NetInfo(0, 2), 'net0.player2', ServerSocket('')))
-
-        self.team_lens = (len(team_1), len(team_2))
-
-    def init_battle(self):
-        pass
+    def create_character(self, team, index, info):
+        if len(self.cards[team - 1]) < index:
+            self.cards[team - 1].append((None, CharacterCard(team, index, info)))
+        else:
+            self.cards[team - 1][index - 1][1].info = info
 
     def run_battle(self):
         running = True
@@ -85,20 +68,12 @@ class GUIBattleManager:
             self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
             self.clock = pygame.time.Clock()
 
-            self.cards = [(None, CharacterCard(host.net_info.net_addr, host.net_info.host_addr, host.packet_processor))
-                          for host in self.arena.hosts.values() if
-                          isinstance(host.packet_processor, CharacterProcessor)]
-
             while running:
                 running = len(pygame.event.get(pygame.QUIT)) == 0
                 self.size = self.width, self.height = self.screen.get_width(), self.screen.get_height()
                 
                 if self.winner == 0:
                     self.render_battlefield()
-
-                    if not self.arena.mainRouter.current_move[0]:
-                        thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
-                        thread.start()
 
                     if self.clear_abilities:
                         self.abilities = []
@@ -114,27 +89,36 @@ class GUIBattleManager:
     def render_battlefield(self):
         self.screen.fill('ivory3')
 
-        team_counters = {card.team: 0 for _, card in self.cards}
-        team_remainders = [length % 3 for length in self.team_lens]
+        team_remainders = [len(cards) % 3 for cards in self.cards]
 
         safe_zone_height = self.height / 3
         card_height = max(0, safe_zone_height - 40)
         card_width = 2 * card_height / 3
         safe_zone_width = card_width + 40
 
-        for i, (_, card) in enumerate(self.cards):
-            row_number = team_counters[card.team] // 3
-            index_in_row = team_counters[card.team] % 3
-            in_last_row = self.team_lens[card.team - 1] - 3 * row_number == team_remainders[card.team - 1]
+        for i, (_, card) in enumerate(self.cards[0]):
+            row_number = i // 3
+            index_in_row = i % 3
+            in_last_row = len(self.cards[card.team - 1]) - 3 * row_number == team_remainders[card.team - 1]
 
             x_pos = safe_zone_width * row_number
             y_pos = 20 + safe_zone_height * index_in_row
             offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
 
             card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
-            self.cards[i] = (card_rect, card)
+            self.cards[0][i] = (card_rect, card)
 
-            team_counters[card.team] += 1
+        for i, (_, card) in enumerate(self.cards[1]):
+            row_number = i // 3
+            index_in_row = i % 3
+            in_last_row = len(self.cards[card.team - 1]) - 3 * row_number == team_remainders[card.team - 1]
+
+            x_pos = safe_zone_width * row_number
+            y_pos = 20 + safe_zone_height * index_in_row
+            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
+
+            card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
+            self.cards[1][i] = (card_rect, card)
 
         for i, (_, ability) in enumerate(self.abilities):
             card_rect = ability.draw(self.screen, self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)
@@ -162,7 +146,26 @@ if __name__ == '__main__':
     [ziggy, kibel, cofee] = CharacterFactory().make_characters(Path('./characters'))
 
     manager = GUIBattleManager(threading.Lock())
-    manager.setup_battle([ziggy, cofee], [kibel])
-    manager.init_battle()
-    manager.run_battle()
-    manager.end_battle()
+    arena = Battle()
+
+    @register_player(manager)
+    def create_player(): return PlayerProcessor()
+
+    for i in range(3):
+        arena.add_switch(Switch(NetInfo(i, 0), f'net{i}.switch'))
+
+    for i, character in enumerate([ziggy, cofee], start=1):
+        arena.add_host(Host(NetInfo(1, i), f'net1.host{i}', CharacterProcessor(character)))
+
+    for i, character in enumerate([kibel], start=1):
+        arena.add_host(Host(NetInfo(2, i), f'net2.host{i}', CharacterProcessor(character)))
+
+    arena.add_host(Host(NetInfo(0, 1), 'net0.player1', create_player()))
+    arena.add_host(Host(NetInfo(0, 2), 'net0.player2', create_player()))
+
+    thread = threading.Thread(target=manager.run_battle, daemon=True)
+    thread.start()
+
+    while True:
+        arena.mainRouter.handshake()
+    manager.close()

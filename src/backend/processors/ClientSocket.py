@@ -6,14 +6,16 @@ import socket
 import json
 
 class ClientSocket(PacketProcessor):
-    def __init__(self, ip_addr, port=8233, encoding='utf-8'):
-        self.ip_addr = input('Enter server\'s IP address: ')
+    def __init__(self, ip_addr, port=8233, encoding='utf-8', processor=PlayerProcessor()):
+        self.ip_addr = ip_addr
         self.port = port
         self.encoding = encoding
 
         self.socket = None
 
-        self.processor = PlayerProcessor()
+        self.processor = processor
+        self.connect_to_server()
+        self.handshake()
 
     def connect_to_server(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,6 +26,7 @@ class ClientSocket(PacketProcessor):
         net_info_parsed = json.loads(net_info[0].decode(self.encoding))
 
     def receive_packet(self):
+        print('a')
         packet = self.socket.recvfrom(1024)[0]
         deserialized = Packet.deserialize(json.loads(packet.decode(self.encoding)))
 

@@ -4,9 +4,11 @@ import urllib.request
 import io
 
 class CharacterCard:
-    def __init__(self, team, index, followed_processor):
+    def __init__(self, team, index, info):
         self.team = team
         self.index = index
+        self.info = info
+        '''
         self.processor = followed_processor
 
         if self.processor.base_character.loaded_image is None:
@@ -17,8 +19,13 @@ class CharacterCard:
             self.processor.base_character.loaded_image = request.read()
         else:
             print(f'Profile pic for {self.processor.base_character.name} has already been fetched!')
+            '''
 
-    def draw(self, ctx, x, y, active, allowed_height=300):
+    def draw(self, ctx, x, y, active, allowed_height=300, info=None):
+        if info is not None:
+            self.info = info
+            print(f'Card received new info: {info}')
+
         allowed_width = 2 * allowed_height / 3
         base_margin = 0.05 * allowed_width
         inner_margin = 0.6 * base_margin
@@ -35,9 +42,10 @@ class CharacterCard:
         font = pygame.font.SysFont('monospace', font_size)
         bold_font = pygame.font.SysFont('monospace', bold=True, size=font_size)
 
-        label = bold_font.render(self.processor.character_state.name, 1, 'black')
+        label = bold_font.render(self.info, 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin))
 
+        '''
         label = font.render(f'HP: {self.processor.character_state.hp}', 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin + text_offset + image_offset))
 
@@ -48,6 +56,7 @@ class CharacterCard:
         image = pygame.transform.scale(image, (image_width, image_width * image.get_height() / image.get_width()))
 
         ctx.blit(image, (x + base_margin, y + base_margin + text_offset), (0, (image.get_height() - image_height) / 2, image_width, image_height))
+            '''
 
         return card_rect
 

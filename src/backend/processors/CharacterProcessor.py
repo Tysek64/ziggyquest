@@ -1,7 +1,7 @@
 from src.backend.processors.PacketProcessor import PacketProcessor
 from src.backend.character.Character import Character
 from src.backend.Packet import Packet
-from src.backend.PacketEnums import Command, Variable, Value
+from src.backend.PacketEnums import Command, Variable, Value, Target
 from copy import deepcopy
 
 # holds state and responds to packets
@@ -73,12 +73,12 @@ class CharacterProcessor(PacketProcessor):
             elif packet.payload[0] == Command.QUERY:
                 if packet.payload[1] == Variable.ABILITIES:
                     for abl in self.base_character.abilities:
-                        reply_packet = Packet.generate_packet(packet.src_net, 0)
+                        reply_packet = Packet.generate_packet(packet.src_net, Target.BROADCAST)
                         reply_packet.payload = (Command.REPLY, Variable.ABILITY, f'{abl.name}: {abl.cost}')
 
                         reply_packets.append(reply_packet)
                 else:
-                    reply_packet = Packet.generate_packet(packet.src_net, 0)
+                    reply_packet = Packet.generate_packet(packet.src_net, Target.BROADCAST)
                     reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
                                             self.base_character.name if packet.payload[1] == Variable.NAME else
                                             self.character_state.__str__())

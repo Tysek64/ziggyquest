@@ -7,7 +7,7 @@ import json
 
 class ServerSocket(PacketProcessor):
     def __init__(self, ip_addr, port=8233, encoding='utf-8'):
-        self.ip_addr = input('Enter server\'s IP address: ')
+        self.ip_addr = ip_addr
         self.port = port
         self.encoding = encoding
 
@@ -36,6 +36,7 @@ class ServerSocket(PacketProcessor):
         self.socket.close()
 
     def process_packet(self, packet: Packet):
+        print(f'Sending {packet}')
         self.client.sendall(json.dumps(packet.serialize()).encode(self.encoding))
         received = self.decode_packets(self.client.recv(2048))
         return received

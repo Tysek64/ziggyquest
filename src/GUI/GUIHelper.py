@@ -23,8 +23,11 @@ def register_player(manager):
                 elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
                     manager.announce_winner(3 - packet.dst_host)
                 elif packet.payload is not None and packet.payload[0] == Command.REPLY:
+                    print(packet.payload[2])
                     if packet.payload[1] == Variable.ABILITY:
                         manager.create_ability(packet.payload[2])
+                    else:
+                        manager.create_character(packet.src_net, packet.id, packet.payload[2])
                 return []
 
             player = player_creator(*args, **kwargs)
