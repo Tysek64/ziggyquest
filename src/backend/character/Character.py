@@ -32,6 +32,8 @@ class Character:
 
     def __repr__(self):
         return json.dumps({
+                          'checksum': self.checksum,
+                          'img_link': self.img_link,
                           'name': self.name,
                           'hp': self.hp,
                           'mp': self.mp

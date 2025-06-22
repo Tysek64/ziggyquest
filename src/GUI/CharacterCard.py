@@ -1,6 +1,6 @@
+from src.GUI.ImageCache import ImageCache
 import pygame.draw
 import pygame
-import urllib.request
 import io
 import json
 
@@ -9,18 +9,9 @@ class CharacterCard:
         self.team = team
         self.index = index
         self.info = info
-        '''
-        self.processor = followed_processor
+        parsed_info = json.loads(info)
 
-        if self.processor.base_character.loaded_image is None:
-            url = self.processor.base_character.img_link
-            print(f'Fetching profile pic from {url}...')
-            request = urllib.request.urlopen(url)
-
-            self.processor.base_character.loaded_image = request.read()
-        else:
-            print(f'Profile pic for {self.processor.base_character.name} has already been fetched!')
-            '''
+        self.image = ImageCache.fetch_image(parsed_info['checksum'], parsed_info['img_link'])
 
     def draw(self, ctx, x, y, active, allowed_height=300, info=None):
         if info is not None:
@@ -54,12 +45,10 @@ class CharacterCard:
         label = font.render(f'MP: {status['mp']}', 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin + 2 * text_offset + image_offset))
 
-        '''
-        image = pygame.image.load(io.BytesIO(self.processor.base_character.loaded_image))
+        image = pygame.image.load(io.BytesIO(self.image))
         image = pygame.transform.scale(image, (image_width, image_width * image.get_height() / image.get_width()))
 
         ctx.blit(image, (x + base_margin, y + base_margin + text_offset), (0, (image.get_height() - image_height) / 2, image_width, image_height))
-            '''
 
         return card_rect
 
