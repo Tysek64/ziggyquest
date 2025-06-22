@@ -3,6 +3,7 @@ from src.backend.processors.CharacterProcessor import CharacterProcessor
 from src.backend.net_devices.Host import Host
 from src.backend.NetInfo import NetInfo
 from src.backend.processors.PlayerProcessor import PlayerProcessor
+from src.backend.processors.ServerSocket import ServerSocket
 from src.backend.net_devices.Switch import Switch
 from pathlib import Path
 from src.backend.Battle import Battle
@@ -21,7 +22,7 @@ if __name__ == '__main__':
     arena.add_host(Host(NetInfo(2, 1), 'net2.host1', CharacterProcessor(character)))
     arena.add_host(Host(NetInfo(2, 2), 'net2.host2', CharacterProcessor(character)))
 
-    arena.add_host(Host(NetInfo(0, 1), 'net0.player1', PlayerProcessor()))
+    arena.add_host(Host(NetInfo(0, 1), 'net0.player1', ServerSocket('localhost', 8233)))
     arena.add_host(Host(NetInfo(0, 2), 'net0.player2', PlayerProcessor()))
 
     for i in range(10):

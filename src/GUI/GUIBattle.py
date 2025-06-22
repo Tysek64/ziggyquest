@@ -3,10 +3,11 @@ from src.backend.Battle import Battle
 from src.backend.character.CharacterParser import CharacterFactory
 from src.backend.processors.CharacterProcessor import CharacterProcessor
 from src.GUI.CharacterCard import CharacterCard, AbilityCard
-from src.GUI.GUIHelper import register_player, register_character
+from src.GUI.GUIHelper import register_player
 from src.backend.net_devices.Host import Host
 from src.backend.NetInfo import NetInfo
 from src.backend.processors.PlayerProcessor import PlayerProcessor
+from src.backend.processors.ServerSocket import ServerSocket
 from src.backend.net_devices.Switch import Switch
 import pygame
 import sys
@@ -59,20 +60,17 @@ class GUIBattleManager:
         @register_player(self)
         def create_player(): return PlayerProcessor()
 
-        @register_character(self)
-        def create_character(character): return CharacterProcessor(character)
-
         for i in range(3):
             self.arena.add_switch(Switch(NetInfo(i, 0), f'net{i}.switch'))
 
         for i, character in enumerate(team_1, start=1):
-            self.arena.add_host(Host(NetInfo(1, i), f'net1.host{i}', create_character(character)))
+            self.arena.add_host(Host(NetInfo(1, i), f'net1.host{i}', CharacterProcessor(character)))
 
         for i, character in enumerate(team_2, start=1):
-            self.arena.add_host(Host(NetInfo(2, i), f'net2.host{i}', create_character(character)))
+            self.arena.add_host(Host(NetInfo(2, i), f'net2.host{i}', CharacterProcessor(character)))
 
         self.arena.add_host(Host(NetInfo(0, 1), 'net0.player1', create_player()))
-        self.arena.add_host(Host(NetInfo(0, 2), 'net0.player2', create_player()))
+        self.arena.add_host(Host(NetInfo(0, 2), 'net0.player2', ServerSocket('')))
 
         self.team_lens = (len(team_1), len(team_2))
 

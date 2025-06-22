@@ -45,3 +45,45 @@ class Variable(Flag):
 class Value(Enum):
     DEFAULT = auto()
     CURRENT = auto()
+
+str_to_enum = {
+    'opponent': Team.OPPONENT,
+    'me': Team.ME,
+
+    'broadcast': Target.BROADCAST,
+    'player_unicast': Target.PLAYER_UNICAST,
+    'target_unicast': Target.TARGET_UNICAST,
+    'random_unicast': Target.RANDOM_UNICAST,
+    'self_unicast': Target.SELF_UNICAST,
+
+    'set': Command.SET,
+    'increase': Command.INCREASE,
+    'decrease': Command.DECREASE,
+    'fail': Command.FAIL,
+    'execute': Command.EXECUTE,
+    'no_remain': Command.NO_REMAIN,
+    'end_turn': Command.END_TURN,
+    'end_game': Command.END_GAME,
+    'query': Command.QUERY,
+    'reply': Command.REPLY,
+
+    'damage': Variable.DAMAGE,
+    'HP': Variable.HP,
+    'MP': Variable.MP,
+    'attack': Variable.ATTACK,
+    'defense': Variable.DEFENSE,
+    'speed': Variable.SPEED,
+    'abilities': Variable.ABILITIES,
+    'stats': Variable.STATS,
+    'name': Variable.NAME,
+    'character': Variable.CHARACTER,
+    'ability': Variable.ABILITY,
+    'tier': Variable.TIER,
+
+    'default': Value.DEFAULT,
+    'current': Value.CURRENT,
+
+    None: None
+}
+
+enum_to_str = {v: k for k, v in str_to_enum.items()}

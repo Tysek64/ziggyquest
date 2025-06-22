@@ -135,7 +135,6 @@ class GUISelectionManager:
 if __name__ == '__main__':
 
     manager = GUISelectionManager(threading.Lock())
-    manager.setup_battle(character_root_path=Path('./characters'))
-    manager.init_battle()
+    manager.setup(character_root_path=Path('./characters'))
     manager.run()
 

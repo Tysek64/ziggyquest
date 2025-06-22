@@ -1,11 +1,8 @@
-
 from src.backend.net_devices.BaseRouter import BaseRouter
 from src.backend.NetInfo import NetInfo
 from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command, Target, Variable
 
-
-# TODO : change class name to something like BattleRouter
 class BattleRouter(BaseRouter):
     def __init__(self, net_info: NetInfo, hostname: str | None = None):
         super().__init__(net_info, hostname)
@@ -40,7 +37,9 @@ class BattleRouter(BaseRouter):
             self.current_move = (False, None, None)
         elif packet.payload is not None and packet.payload[0] == Command.REPLY:
             if packet.src_net != 0:
-                print(packet.payload[2])
+                relay_packet = Packet.generate_packet(0, self.current_team)
+                relay_packet.payload = packet.payload
+                self.send_packet(relay_packet)
             else:
                 if self.current_move[1] is None:
                     self.current_move = (True, packet.payload[2], None)

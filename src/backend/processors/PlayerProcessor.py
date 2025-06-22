@@ -9,5 +9,7 @@ class PlayerProcessor(PacketProcessor):
             reply_packet.payload = (Command.REPLY, None, int(input(packet.payload[2])))
 
             return [reply_packet]
+        elif packet.payload is not None and packet.payload[0] == Command.REPLY:
+            print(packet.payload[2])
         return []
             

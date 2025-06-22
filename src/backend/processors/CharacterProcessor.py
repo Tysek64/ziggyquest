@@ -81,7 +81,7 @@ class CharacterProcessor(PacketProcessor):
                     reply_packet = Packet.generate_packet(packet.src_net, 0)
                     reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
                                             self.base_character.name if packet.payload[1] == Variable.NAME else
-                                            self.character_state)
+                                            self.character_state.__str__())
 
                     reply_packets.append(reply_packet)
             elif packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):
