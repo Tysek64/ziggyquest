@@ -12,21 +12,20 @@ class WindowManager:
         self._running = False
         self.pygame_lock = pygame_lock
 
-    def setup_game(self) -> None:
-        pygame.init()
-        pygame.display.set_mode(self.size, pygame.HWSURFACE
-                                | pygame.DOUBLEBUF)
-        self._running = True
-
     # renderers must be created after setup_game
     def hook_renderers(self, renderers: list[SurfaceRenderer]):
         self.renderers = renderers
 
-    def run_game(self) -> None:
+    def run(self) -> None:
         if not self._running:
             raise ValueError('Game was not set up (call setup_game)')
 
         with self.pygame_lock:
+            pygame.init()
+            pygame.display.set_mode(self.size, pygame.HWSURFACE
+                                    | pygame.DOUBLEBUF)
+            self._running = True
+
             while self._running:
                 sleep(0.05)
                 for event in pygame.event.get():
@@ -60,6 +59,6 @@ if __name__ == '__main__':
             renderer.register(render_object)
 
     game.hook_renderers(renderers)
-    game.run_game()
+    game.run()
 
 

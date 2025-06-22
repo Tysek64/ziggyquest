@@ -46,7 +46,7 @@ class GUISelectionManager:
         while len(self.cards) == 0 or self.cards[-1][0] is None:
             pygame.time.delay(100)
 
-        result = 1 + self.check_for_click(self.cards)
+        result = self.check_for_click(self.cards)
         self.clear_characters = True
         return result
 
@@ -64,7 +64,7 @@ class GUISelectionManager:
     def create_character(self, info):
         self.cards.append((None, AbilityCard(info)))
 
-    def setup_battle(self, *args, **kwargs):
+    def setup(self, *args, **kwargs):
         @register_player(self)
         def create_player(): return PlayerProcessor()
 
@@ -81,10 +81,8 @@ class GUISelectionManager:
         self.arena.add_host(Host(NetInfo(0, 1), 'net0.player1', create_player()))
         self.arena.add_host(Host(NetInfo(0, 2), 'net0.player2', create_player()))
 
-    def init_battle(self):
-        pass
 
-    def run_battle(self):
+    def run(self):
         running = True
 
         with self.pygame_lock:
@@ -102,7 +100,7 @@ class GUISelectionManager:
                 
                 self.render_battlefield()
 
-                if not self.arena.mainRouter.current_move[0]:
+                if not self.arena.mainRouter.handshake_running:
                     thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
                     thread.start()
 
@@ -139,5 +137,5 @@ if __name__ == '__main__':
     manager = GUISelectionManager(threading.Lock())
     manager.setup_battle(character_root_path=Path('./characters'))
     manager.init_battle()
-    manager.run_battle()
+    manager.run()
 

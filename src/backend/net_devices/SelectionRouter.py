@@ -8,6 +8,7 @@ class SelectionRouter(BaseRouter):
         super().__init__(net_info, hostname)
         # tier, character_id
         self.current_move = (None, None, None)
+        self.handshake_running = False
 
     def handshake(self):
         self.handshake_running = True

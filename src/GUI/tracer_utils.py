@@ -14,4 +14,4 @@ def setup_game(game: WindowManager, drawables):
             renderer.register(render_object)
 
     game.hook_renderers(renderers)
-    game.run_game()
+    game.run()

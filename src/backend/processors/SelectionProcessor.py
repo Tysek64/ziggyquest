@@ -19,13 +19,13 @@ class SelectionProcessor(PacketProcessor):
             if packet.payload[1] == Variable.CHARACTER:
                for character in self.get_available_characters():
                    reply_packet = Packet.generate_packet(packet.src_net, 0)
-                   reply_packet.payload = (Command.REPLY, Variable.CHARACTER, character)
+                   reply_packet.payload = (Command.REPLY, Variable.TIER, character)
                    reply_packets.append(reply_packet)
 
             elif packet.payload[1] == Variable.TIER:
                 for character in self.get_characters_tier(packet.payload[2]):
                     reply_packet = Packet.generate_packet(packet.src_net, 0)
-                    reply_packet.payload = (Command.REPLY, Variable.TIER, character)
+                    reply_packet.payload = (Command.REPLY, Variable.CHARACTER, character)
                     reply_packets.append(reply_packet)
 
         elif packet.payload[0] == Command.EXECUTE:
@@ -41,9 +41,9 @@ class SelectionProcessor(PacketProcessor):
 
     def get_available_characters(self) -> list[str]:
         return [
-            f'{tier}: character: {character}\n'
-            for tier, character_list in zip(self.tier_list, self.character_list)
-                for character in character_list
+            ''.join(f'{tier}: character: {character}\n'
+                    for character in character_list
+                    )            for tier, character_list in zip(self.tier_list, self.character_list)
         ]
 
     def get_characters_tier(self, tier: int) -> list[str]:
