@@ -20,6 +20,8 @@ def register_player(manager):
                         reply_packet.payload = (Command.REPLY, None, manager.get_selected_ability())
 
                     return [reply_packet]
+                elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
+                    manager.announce_winner(3 - packet.dst_host)
                 return []
 
             player = player_creator(*args, **kwargs)

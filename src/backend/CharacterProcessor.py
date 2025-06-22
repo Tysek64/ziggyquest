@@ -31,35 +31,50 @@ class CharacterProcessor(PacketProcessor):
 
         if packet.payload is not None:
             if packet.payload[0] == Command.EXECUTE:
-                if self.base_character.abilities[packet.payload[2]].trigger is None:
-                    #TODO : check if we can afford
-                    for step in self.base_character.abilities[packet.payload[2]].packets:
-                        new_packet = Packet.make_packet(step)
-                        new_payload = list(new_packet.payload)
-
-                        if new_packet.payload[2] == Value.CURRENT:
-                            new_payload[2] = getattr(self.character_state, self.attr_map[new_packet.payload[1]][0])
-                        elif new_packet.payload[2] == Value.DEFAULT:
-                            new_payload[2] = getattr(self.base_character, self.attr_map[new_packet.payload[1]][0])
-
-                        new_packet.payload = new_payload
-
-                        reply_packets.append(new_packet)
+                if self.character_state.hp == 0:
+                    # fail if character is dead
+                    reply_packet = Packet.generate_packet(-1, 0)
+                    reply_packet.payload = (Command.FAIL, Variable.CHARACTER, None)
+                    reply_packets.append(reply_packet)
                 else:
-                    queued_packets = self.trigger_queue.get(self.base_character.abilities[packet.payload[2]].trigger, [])
-                    queued_packets.extend(self.base_character.abilities[packet.payload[2]].packets)
-                    # creates key if it did not exist
-                    self.trigger_queue[self.base_character.abilities[packet.payload[2]].trigger] = queued_packets
+                    if self.base_character.abilities[packet.payload[2]].cost <= self.character_state.mp:
+                        self.character_state.mp -= self.base_character.abilities[packet.payload[2]].cost
+                        if self.base_character.abilities[packet.payload[2]].trigger is None:
+                            for step in self.base_character.abilities[packet.payload[2]].packets:
+                                new_packet = Packet.make_packet(step)
+                                new_payload = list(new_packet.payload)
+
+                                if new_packet.payload[2] == Value.CURRENT:
+                                    new_payload[2] = getattr(self.character_state, self.attr_map[new_packet.payload[1]][0])
+                                elif new_packet.payload[2] == Value.DEFAULT:
+                                    new_payload[2] = getattr(self.base_character, self.attr_map[new_packet.payload[1]][0])
+
+                                new_packet.payload = new_payload
+
+                                reply_packets.append(new_packet)
+                        else:
+                            queued_packets = self.trigger_queue.get(self.base_character.abilities[packet.payload[2]].trigger, [])
+                            queued_packets.extend(self.base_character.abilities[packet.payload[2]].packets)
+                            # creates key if it did not exist
+                            self.trigger_queue[self.base_character.abilities[packet.payload[2]].trigger] = queued_packets
+                    else:
+                        # fail if ability is too expensive
+                        reply_packet = Packet.generate_packet(-1, 0)
+                        reply_packet.payload = (Command.FAIL, Variable.ABILITY, None)
+                        reply_packets.append(reply_packet)
             elif packet.payload[0] == Command.END_TURN:
                 self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage))
                 self.character_state.damage = 0
+
+                if self.character_state.hp == 0:
+                    reply_packet = Packet.generate_packet(packet.dst_net, 0)
+                    reply_packet.payload = (Command.END_GAME, None, None)
+                    reply_packets.append(reply_packet)
             elif packet.payload[0] == Command.QUERY:
                 if packet.payload[1] == Variable.ABILITIES:
                     for abl in self.base_character.abilities:
                         reply_packet = Packet.generate_packet(packet.src_net, 0)
-                        reply_packet.payload = (Command.REPLY, 
-                                                Variable.ABILITY,
-                                                f'{abl.name}: {abl.cost}')
+                        reply_packet.payload = (Command.REPLY, Variable.ABILITY, f'{abl.name}: {abl.cost}')
 
                         reply_packets.append(reply_packet)
                 else:

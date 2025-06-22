@@ -17,6 +17,7 @@ class GUIBattleManager:
         self.arena = Battle()
         self.cards = []
         self.abilities = []
+        self.clear_abilities = False
         self.active_team = 0
         self.size = self.width, self.height = window_width, window_height
         self.team_lens = (0, 0)
@@ -24,13 +25,14 @@ class GUIBattleManager:
         self.clock = None
         self.screen = None
         self.pygame_lock = pygame_lock
+        self.winner = 0
 
-    def check_for_click(self, rects):
+    def check_for_click(self, rects, filters):
         while True:
             events = pygame.event.get(pygame.MOUSEBUTTONDOWN, pump=False)
             for event in events:
                 pos = pygame.mouse.get_pos()
-                for i, (rect, _) in enumerate(rects):
+                for i, (rect, _) in enumerate(filter(filters, rects)):
                     if rect.collidepoint(pos):
                         return i
             pygame.time.delay(100)
@@ -40,14 +42,14 @@ class GUIBattleManager:
         while self.cards[-1][0] is None:
             pygame.time.delay(100)
 
-        return 1 + self.check_for_click([(rect, card) for rect, card in self.cards if card.team == self.active_team])
+        return 1 + self.check_for_click(self.cards, lambda card: card[1].team == self.active_team)
 
     def get_selected_ability(self):
         while self.abilities[-1][0] is None:
             pygame.time.delay(100)
 
-        result = self.check_for_click(self.abilities)
-        self.abilities = []
+        result = self.check_for_click(self.abilities, lambda _: True)
+        self.clear_abilities = True
         return result
 
     def create_ability(self, info):
@@ -91,30 +93,47 @@ class GUIBattleManager:
 
             while running:
                 running = len(pygame.event.get(pygame.QUIT)) == 0
-
                 self.size = self.width, self.height = self.screen.get_width(), self.screen.get_height()
+                
+                if self.winner == 0:
+                    self.render_battlefield()
 
-                self.render_battlefield()
+                    if not self.arena.mainRouter.current_move[0]:
+                        thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
+                        thread.start()
 
-                if not self.arena.mainRouter.current_move[0]:
-                    thread = threading.Thread(target=self.arena.mainRouter.handshake, daemon=True)
-                    thread.start()
+                    if self.clear_abilities:
+                        self.abilities = []
+                        self.clear_abilities = False
+                else:
+                    self.render_end_screen()
 
                 pygame.display.update()
                 self.clock.tick(60)
+
             self.close()
 
     def render_battlefield(self):
         self.screen.fill('ivory3')
 
         team_counters = {card.team: 0 for _, card in self.cards}
+        team_remainders = [length % 3 for length in self.team_lens]
+
+        safe_zone_height = self.height / 3
+        card_height = max(0, safe_zone_height - 40)
+        card_width = 2 * card_height / 3
+        safe_zone_width = card_width + 40
 
         for i, (_, card) in enumerate(self.cards):
-            safe_zone_height = self.height / self.team_lens[card.team - 1]
-            card_height = safe_zone_height - 40
-            card_width = 2 * card_height / 3
+            row_number = team_counters[card.team] // 3
+            index_in_row = team_counters[card.team] % 3
+            in_last_row = self.team_lens[card.team - 1] - 3 * row_number == team_remainders[card.team - 1]
 
-            card_rect = card.draw(self.screen, 100 if card.team == 1 else self.width - 100 - card_width, 20 + safe_zone_height * team_counters[card.team], card.team == self.active_team, card_height)
+            x_pos = safe_zone_width * row_number
+            y_pos = 20 + safe_zone_height * index_in_row
+            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
+
+            card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
             self.cards[i] = (card_rect, card)
 
             team_counters[card.team] += 1
@@ -123,6 +142,20 @@ class GUIBattleManager:
             card_rect = ability.draw(self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)
             self.abilities[i] = (card_rect, ability)
 
+    def render_end_screen(self):
+        self.screen.fill('black')
+
+        font = pygame.font.SysFont('serif', bold=True, size=72)
+
+        label = font.render(f'Player {self.winner} won!', 1, 'darkgoldenrod')
+        rect = label.get_rect()
+
+        self.screen.blit(label, ((self.width - rect.width) / 2, (self.height - rect.height) / 2))
+
+    def announce_winner(self, winning_team):
+        print(f'Team {winning_team} won!')
+        self.winner = winning_team
+
     def close(self):
         pygame.quit()
         sys.exit()
@@ -130,8 +163,8 @@ class GUIBattleManager:
 if __name__ == '__main__':
     [ziggy, kibel, cofee] = CharacterFactory().make_characters(Path('./characters'))
 
-    manager = GUIBattleManager()
-    manager.setup_battle([ziggy, ziggy], [kibel, kibel, kibel])
+    manager = GUIBattleManager(threading.Lock())
+    manager.setup_battle([ziggy, cofee], [kibel])
     manager.init_battle()
     manager.run_battle()
     manager.end_battle()

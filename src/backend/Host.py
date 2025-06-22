@@ -40,7 +40,7 @@ class Host(NetDevice):
         reply_packets = self.packet_processor.process_packet(packet)
         end_turn_packet = Packet.generate_packet(self.port.address.net_addr, self.port.address.host_addr)
         end_turn_packet.payload = (Command.NO_REMAIN, None, None)
-        reply_packets.append(end_turn_packet)
         if packet.payload is None or packet.payload[0] != Command.END_TURN:
-            for reply_packet in reply_packets:
-                self.send_packet(reply_packet)
+            reply_packets.append(end_turn_packet)
+        for reply_packet in reply_packets:
+            self.send_packet(reply_packet)
