@@ -2,6 +2,7 @@ import pygame.draw
 import pygame
 import urllib.request
 import io
+import json
 
 class CharacterCard:
     def __init__(self, team, index, info):
@@ -26,6 +27,8 @@ class CharacterCard:
             self.info = info
             print(f'Card received new info: {info}')
 
+        status = json.loads(self.info)
+
         allowed_width = 2 * allowed_height / 3
         base_margin = 0.05 * allowed_width
         inner_margin = 0.6 * base_margin
@@ -42,16 +45,16 @@ class CharacterCard:
         font = pygame.font.SysFont('monospace', font_size)
         bold_font = pygame.font.SysFont('monospace', bold=True, size=font_size)
 
-        label = bold_font.render(self.info, 1, 'black')
+        label = bold_font.render(status['name'], 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin))
 
-        '''
-        label = font.render(f'HP: {self.processor.character_state.hp}', 1, 'black')
+        label = font.render(f'HP: {status['hp']}', 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin + text_offset + image_offset))
 
-        label = font.render(f'MP: {self.processor.character_state.mp}', 1, 'black')
+        label = font.render(f'MP: {status['mp']}', 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin + 2 * text_offset + image_offset))
 
+        '''
         image = pygame.image.load(io.BytesIO(self.processor.base_character.loaded_image))
         image = pygame.transform.scale(image, (image_width, image_width * image.get_height() / image.get_width()))
 

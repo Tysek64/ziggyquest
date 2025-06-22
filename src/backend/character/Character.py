@@ -1,4 +1,5 @@
 from src.backend.character.Ability import Ability
+import json
 
 class Character:
     def __init__(self, checksum: int, img_link: str, name: str, hp: int,
@@ -30,6 +31,8 @@ class Character:
         '''
 
     def __repr__(self):
-        return f'''
-            Character {self.name}, checksum {self.checksum} 
-        '''
+        return json.dumps({
+                          'name': self.name,
+                          'hp': self.hp,
+                          'mp': self.mp
+        })
