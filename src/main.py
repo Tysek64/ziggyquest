@@ -54,9 +54,6 @@ def setup_client(ip_addr):
 
     arena = ClientSocket(ip_addr=ip_addr, processor=create_player())
 
-    thread = threading.Thread(target=manager.run_battle)
-    thread.start()
-
     def run():
         while True:
             arena.receive_packet()
