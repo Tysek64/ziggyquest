@@ -40,7 +40,6 @@ class GUISelectionManager(GUIController):
                     if rect.collidepoint(pos):
                         return i
             pygame.time.delay(100)
-        return None
 
     def get_selected_card(self):
         while len(self.cards) == 0 or self.cards[-1][0] is None:
