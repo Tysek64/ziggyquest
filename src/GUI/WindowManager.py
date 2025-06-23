@@ -1,3 +1,4 @@
+import urllib.request
 from pathlib import Path
 from time import sleep
 
@@ -62,6 +63,11 @@ if __name__ == '__main__':
     ]
 
     ch0 = CharacterFactory().make_characters(Path('./characters'))[0]
+
+    url = 'https://kwojt.kieg.science/user/images/g5_helium/testimonials/KW_opt.jpg'
+    print(f'Fetching profile pic from {url}...')
+    request = urllib.request.urlopen(url)
+    ch0.loaded_image = request.read()
     render_objects = ObjectLoader().load(pygame.display.get_surface(), ch0)
     for renderer in renderers:
         for render_object in render_objects:
