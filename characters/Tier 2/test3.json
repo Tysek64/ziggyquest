@@ -1,5 +1,5 @@
 {
-	"checksum":		"0x7553294435764788932647382",
+	"checksum":		"2",
 	"image":	"https://pti.org.pl/wp-content/uploads/2019/04/Mazur-Zygmunt-foto-na-www_kwadr.jpg",
 	"name":	"Ziggy Ruzman",
 	"HP":	50,
@@ -21,10 +21,10 @@
 			"packets":	[["me", "broadcast", "increase", "HP", 10]]
 		},
 		{
-			"name":	"bomb",
+			"name":	"kill",
 			"cost":	3,
-			"trigger":	[null, null],
-			"packets":	[["me", "self_unicast", "increase", "damage", 25]]
+			"trigger":	null,
+			"packets":	[["opponent", "player_unicast", "set", "HP", 0]]
 		},
 		{
 			"name":	"deflect",
