@@ -20,4 +20,5 @@ class ImageDrawable(Drawable):
 
 
     def draw(self, surface: pygame.Surface, *args, **kwargs) -> None:
+        print(f'true_pos: {self.position}')
         surface.blit(self.image_surface, self.position, self.crop)

@@ -2,6 +2,7 @@ from enum import Enum, auto
 
 from src.GUI.GUIBattle import GUIBattleManager
 from src.backend.character.Character import Character
+from src.GUI.GUIController import GUIController
 from functools import wraps
 from threading import Lock
 
@@ -23,16 +24,16 @@ class GameManager:
     def set_controller(self, controller_object):
         self.controller_object = controller_object
 
-    # TODO : destroy previous window in a better way
-    def init_battle(self, teams: list[Character]) -> None:
+
+    def change_controller(self, state, *args, **kwargs):
         self.controller_object.close()
-        self.current_stage = GameStage.BATTLE
-        #pygame.event.post(pygame.event.Event(pygame.QUIT))
-        self.controller_object = GUIBattleManager(self.pygame_lock)
-        self.controller_object.setup_battle(teams[0], teams[1])
-        self.controller_object.init_battle()
-        self.controller_object.run_battle()
-        self.controller_object.close()
+        if state == GameStage.BATTLE:
+            self.controller_object = GUIBattleManager(self.pygame_lock)
+            self.controller_object.setup_battle(kwargs['team1'], kwargs['team2'])
+            self.controller_object.run_battle()
+            self.controller_object.close()
+
+
 
 def change_to_battle(context):
     def register_(cls):

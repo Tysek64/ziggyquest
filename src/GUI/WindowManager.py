@@ -1,11 +1,18 @@
+from pathlib import Path
+from time import sleep
+
 import pygame
 from src.GUI.SurfaceRenderer import SurfaceRenderer
 from src.GUI.ObjectLoader import ObjectLoader
-from time import sleep
+import threading
+from threading import Lock
 import sys
 
+from src.backend.character.CharacterParser import CharacterFactory
+
+
 class WindowManager:
-    def __init__(self, pygame_lock, window_width: int = 640, window_height: int = 400) -> None:
+    def __init__(self, pygame_lock: threading.Lock, window_width: int = 1280, window_height: int = 720) -> None:
         self.size = self.width, self_height = window_width, window_height
         self.display = None
         self.renderers = None
@@ -16,28 +23,28 @@ class WindowManager:
     def hook_renderers(self, renderers: list[SurfaceRenderer]):
         self.renderers = renderers
 
+    def setup(self):
+        self.pygame_lock.acquire()
+        pygame.init()
+        pygame.display.set_mode(self.size, pygame.HWSURFACE
+                                | pygame.DOUBLEBUF | pygame.RESIZABLE)
+        self._running = True
+
     def run(self) -> None:
-        if not self._running:
-            raise ValueError('Game was not set up (call setup_game)')
+        while self._running:
+            sleep(0.05)
+            for event in pygame.event.get():
+                self.process_event(event)
 
-        with self.pygame_lock:
-            pygame.init()
-            pygame.display.set_mode(self.size, pygame.HWSURFACE
-                                    | pygame.DOUBLEBUF)
-            self._running = True
+            pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
+            for renderer in self.renderers:
+                renderer.draw()
 
-            while self._running:
-                sleep(0.05)
-                for event in pygame.event.get():
-                    self.process_event(event)
+            pygame.display.update()
 
-                pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
-                for renderer in self.renderers:
-                    renderer.draw()
+        pygame.quit()
+        self.pygame_lock.release()
 
-                pygame.display.update()
-
-            pygame.quit()
 
     def process_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.QUIT:
@@ -47,13 +54,15 @@ class WindowManager:
         self._running = False
 
 if __name__ == '__main__':
-    game = WindowManager()
-    game.setup_game()
+    from threading import Lock
+    game = WindowManager(Lock())
+    game.setup()
     renderers = [
         SurfaceRenderer(pygame.display.get_surface())
     ]
 
-    render_objects = ObjectLoader().load()
+    ch0 = CharacterFactory().make_characters(Path('./characters'))[0]
+    render_objects = ObjectLoader().load(pygame.display.get_surface(), ch0)
     for renderer in renderers:
         for render_object in render_objects:
             renderer.register(render_object)
