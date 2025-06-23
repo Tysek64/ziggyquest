@@ -16,7 +16,7 @@ from src.backend.processors.SelectionProcessor import SelectionProcessor
 from pathlib import Path
 import threading
 
-def setup_server(ip_addr):
+def setup_server(ip_addr, single_player=False):
     [ziggy, kibel, cofee] = CharacterFactory().make_characters(Path('./characters'))
 
     manager = GUIBattleManager(threading.Lock())
@@ -38,7 +38,7 @@ def setup_server(ip_addr):
     '''
 
     selector = SelectionProcessor(characters, tiers)
-    player1 = ServerSocket(ip_addr=ip_addr)
+    player1 = create_player() if single_player else ServerSocket(ip_addr=ip_addr)
     player2 = create_player()
 
     arena.add_host(Host(NetInfo(1, 1), 'net1.host1', selector))
@@ -111,11 +111,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--server', '-s', action='store_true')
+    parser.add_argument('--no_network', '-n', action='store_true')
     parser.add_argument('ip_addr')
 
     args = parser.parse_args()
 
     if args.server:
         setup_server(args.ip_addr)
+    elif args.no_network:
+        setup_server(args.ip_addr, True)
     else:
         setup_client(args.ip_addr)
