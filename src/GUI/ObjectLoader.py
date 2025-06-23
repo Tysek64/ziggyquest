@@ -44,5 +44,5 @@ class ObjectLoader:
                                     Path('D:/python_laby/ziggyquest/src/GUI/resources/Host.jpg'),
                            (350, 350), (100, 100)), {}),
             (ResizableTextDrawable((500, 300), 'Sog4y', pygame.Color(128, 128, 128), parent_surface),{}),
-            (TierCard(test_object, pygame.Rect(400, 500, 100, 200), pygame.Color(0, 0, 255), parent_surface), {})
+            (TierCard(test_object, pygame.Rect(400, 500, 300, 400), pygame.Color(0, 0, 255), parent_surface), {})
         ]

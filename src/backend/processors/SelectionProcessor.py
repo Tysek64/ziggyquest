@@ -41,13 +41,13 @@ class SelectionProcessor(PacketProcessor):
 
     def get_available_characters(self) -> list[str]:
         return [
-            ''.join(f'{tier}: character: {character}\n'
+            ''.join(f'tier id: {tier_id}\ntier name: {tier}\ncharacter: {character}\n'
                     for character in character_list
-                    )            for tier, character_list in zip(self.tier_list, self.character_list)
+                    )            for (tier_id, tier), character_list in zip(enumerate(self.tier_list), self.character_list)
         ]
 
     def get_characters_tier(self, tier: int) -> list[str]:
-        return [str(character) for character in self.character_list[tier]]
+        return [f'character ID: {character_id}\ncharacter: {character}' for character_id, character in enumerate(self.character_list[tier])]
 
 
     def notify_change_stage(self) -> bool:

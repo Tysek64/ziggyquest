@@ -3,6 +3,7 @@ from src.GUI.SurfaceRenderer import SurfaceRenderer
 import pygame
 
 def setup_game(game: WindowManager, drawables):
+    game.setup()
     renderers = [
         SurfaceRenderer(pygame.display.get_surface())
     ]
