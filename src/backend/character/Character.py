@@ -13,7 +13,7 @@ class Character:
         self.attack = attack
         self.defense = defense
         self.speed = speed
-        self.damage = 3 * attack
+        self.damage = 3 * attack + 2
         self.abilities: list[Ability] = abilities
 
     def __str__(self):

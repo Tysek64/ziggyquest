@@ -102,8 +102,6 @@ class GUIBattleManager:
                 pygame.display.update()
                 self.clock.tick(60)
 
-            self.close()
-
     def render_battlefield(self):
         self.screen.fill('ivory3')
 
