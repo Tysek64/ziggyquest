@@ -76,3 +76,7 @@ class ConnectionDrawable(Drawable):
             if self.current_tick == 0:
                 self.packet_img = None
                 self.current_vector = None
+
+    def get_rect(self):
+        size = (self.line.end_pos[0] - self.line.start_pos[0], self.line.end_pos[1] - self.line.start_pos[1])
+        return pygame.Rect(self.line.start_pos, size)

@@ -11,14 +11,31 @@ class ResizeMixin:
         self.main_surface = parent_surface
         self.begin_size = parent_surface.get_size()
         self.begin_points = {attrib_name: deepcopy(self.__getattribute__(attrib_name)) for attrib_name in points}
-        self.points = points
-        self.surfaces = surfaces
-        self.begin_surfaces = {attrib_name: self.__getattribute__(attrib_name) for attrib_name in surfaces}
+        self.__points = points
+        self.__surfaces = surfaces
+        self.begin_surfaces = None
+        self.copy_surfaces(surfaces)
+
+    def copy_surfaces(self, attrib_names: list[str]):
+        self.begin_surfaces = {attrib_name: self.__getattribute__(attrib_name) for attrib_name in attrib_names}
+        for name, surface in self.begin_surfaces.items():
+            if isinstance(surface, pygame.Surface):
+                self.begin_surfaces[name] = surface.copy()
+            elif isinstance(surface, list):
+                self.begin_surfaces[name] = [inner_surface.copy() for inner_surface in surface]
+
+    def reinit(self, parent_surface: pygame.Surface, points: list[str], surfaces: list[str]):
+        self.__points = points
+        self.__surfaces = surfaces
+        self.main_surface = parent_surface
+        self.begin_size = parent_surface.get_size()
+        self.begin_points = {attrib_name: deepcopy(self.__getattribute__(attrib_name)) for attrib_name in points}
+        self.copy_surfaces(surfaces)
 
     def resize(self):
         current_size = self.main_surface.get_size()
         x_scale, y_scale = current_size[0] / self.begin_size[0], current_size[1] / self.begin_size[1]
-        for attrib_name in self.points:
+        for attrib_name in self.__points:
             # single dispatch, single dispatch !
             if isinstance(self.__getattribute__(attrib_name), tuple):
                 point = self.begin_points[attrib_name]
@@ -38,10 +55,18 @@ class ResizeMixin:
 
 
 
-        for attrib_name in self.surfaces:
-            surface = self.begin_surfaces[attrib_name]
-            width, height = surface.get_size()
-            new_surface_size = (width * x_scale, height * y_scale)
-            self.__setattr__(attrib_name, pygame.transform.scale(surface, new_surface_size))
+        for attrib_name in self.__surfaces:
+            surfaces = self.begin_surfaces[attrib_name]
+            if isinstance(self.__getattribute__(attrib_name), pygame.Surface):
+                surface = self.begin_surfaces[attrib_name]
+                width, height = surface.get_size()
+                new_surface_size = (width * x_scale, height * y_scale)
+                self.__setattr__(attrib_name, pygame.transform.scale(surface, new_surface_size))
+            elif isinstance(self.__getattribute__(attrib_name), list):
+                for i in range(len(surfaces)):
+                    begin_surface = surfaces[i]
+                    width, height = begin_surface.get_size()
+                    new_surface_size = (width * x_scale, height * y_scale)
+                    self.__getattribute__(attrib_name)[i] = pygame.transform.scale(begin_surface, new_surface_size)
 
         self.current_size = current_size
