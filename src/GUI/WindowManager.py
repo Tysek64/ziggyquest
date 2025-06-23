@@ -9,6 +9,9 @@ import threading
 from threading import Lock
 import sys
 
+from src.GUI.drawables.ClickableMixin import ClickableMixin
+from src.GUI.drawables.CompositeMixin import CompositeMixin
+from src.GUI.drawables.VerticalDrawable import VerticalDrawable
 from src.backend.character.CharacterParser import CharacterFactory
 
 
@@ -48,8 +51,25 @@ class WindowManager:
 
 
     def process_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.QUIT:
-            self._running = False
+        match event.type:
+            case pygame.QUIT:
+                self._running = False
+            case pygame.MOUSEBUTTONDOWN:
+                for renderer in self.renderers:
+                    for object_ in renderer.render_objects:
+                        obj = object_[0]
+                        if isinstance(obj, ClickableMixin) and obj.hitbox.collidepoint(pygame.mouse.get_pos()):
+                            object_.on_click()
+
+                        if isinstance(obj, CompositeMixin) and obj.get_rect().collidepoint(pygame.mouse.get_pos()):
+                            for element, pos in zip(obj._rendered_objects, obj.points):
+                                if isinstance(element, ClickableMixin):
+                                    new_hitbox = pygame.Rect(pos, element.hitbox.size)
+                                    if new_hitbox.collidepoint(pygame.mouse.get_pos()):
+                                        element.on_click()
+
+
+
 
     def close(self):
         self._running = False
