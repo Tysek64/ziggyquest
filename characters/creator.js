@@ -38,7 +38,7 @@ function addStep (ability) {
 	let teamInput = createSelect(["me", "opponent"]);
 	let targetInput = createSelect(["broadcast", "player_unicast", "target_unicast", "random_unicast", "self_unicast"]);
 	let commandInput = createSelect(["set", "increase", "decrease"]);
-	let variableInput = createSelect(["damage", "hp", "mp", "attack", "defense", "speed"]);
+	let variableInput = createSelect(["damage", "HP", "MP", "attack", "defense", "speed"]);
 	let valueInput = createSelect(["default", "current", "other"]);
 
 	let otherValueInput = document.createElement("td");
@@ -77,7 +77,7 @@ function addAbility (ability) {
 	triggerCheckbox.style = "width: 24px; height: 24px;";
 
 	let commandInput = createSelect(["set", "increase", "decrease", "null"]);
-	let variableInput = createSelect(["damage", "hp", "mp", "attack", "defense", "speed", "null"]);
+	let variableInput = createSelect(["damage", "HP", "MP", "attack", "defense", "speed", "null"]);
 
 	let stepsInput = document.createElement("td");
 	let stepsTable = stepsInput.appendChild(document.createElement("table"));
@@ -114,7 +114,7 @@ function deleteRow (rowToDelete) {
 }
 
 function parseStep (elements) {
-	return [elements[0].value, elements[1].value, elements[2].value, elements[3].value, elements[4].value == "other" ? elements[5].value : elements[4].value];
+	return [elements[0].value, elements[1].value, elements[2].value, elements[3].value, elements[4].value == "other" ? parseInt(elements[5].value) : elements[4].value];
 }
 
 function parseSteps (table) {
