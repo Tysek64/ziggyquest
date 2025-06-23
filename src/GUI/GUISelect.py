@@ -10,6 +10,7 @@ from src.backend.processors.PlayerProcessor import PlayerProcessor
 from src.backend.net_devices.Switch import Switch
 from src.backend.character.character_utils import load_characters
 from src.backend.net_devices.SelectionRouter import SelectionRouter
+from src.GUI.GUIController import GUIController
 import pygame
 import sys
 import threading
@@ -17,19 +18,18 @@ import threading
 from src.backend.processors.SelectionProcessor import SelectionProcessor
 
 
-class GUISelectionManager:
+class GUISelectionManager(GUIController):
     def __init__(self, pygame_lock, window_width=1280, window_height=720):
+        super().__init__(pygame_lock, window_width, window_height)
         self.arena = Battle(SelectionRouter(NetInfo(-1, 0), 'router'))
         self.cards = []
         self.abilities = []
+
         self.clear_tiers = False
         self.clear_characters = False
         self.active_team = 0
-        self.size = self.width, self.height = window_width, window_height
-
         self.clock = None
         self.screen = None
-        self.pygame_lock = pygame_lock
 
     def check_for_click(self, rects):
         while True:

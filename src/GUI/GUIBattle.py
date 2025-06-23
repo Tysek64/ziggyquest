@@ -12,8 +12,8 @@ from src.backend.net_devices.Switch import Switch
 import pygame
 import sys
 import threading
-
-class GUIBattleManager:
+from src.GUI.GUIController import GUIController
+class GUIBattleManager(GUIController):
     def __init__(self, pygame_lock, window_width=1280, window_height=720):
         self.cards = [[], []]
         self.abilities = []
@@ -35,7 +35,6 @@ class GUIBattleManager:
                     if rect.collidepoint(pos):
                         return i
             pygame.time.delay(100)
-        return None
 
     def get_selected_card(self):
         while self.cards[-1][-1][0] is None:
