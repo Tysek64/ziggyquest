@@ -26,7 +26,7 @@ if __name__ == '__main__':
                               ResizableTextDrawable((0,0), 'One_nig',
                                                     color=pygame.Color('red'), parent_surface=parent_surface,
                                                     centered=False),
-                              ResizableButton(pygame.Rect(0, 0, 200, 100), 'button_test', pygame.Color('pink'),
+                              ResizableButton(pygame.Rect(0, 0, 200, 100), 'Exit', pygame.Color('pink'),
                                               (lambda : menu.close()), parent_surface)
                           ], row_width=1), {})
     ]
