@@ -21,6 +21,7 @@ class GUIBattleManager:
         self.clear_cards = False
         self.in_battle = False
         self.active_team = 1
+        self.active = False
         self.size = self.width, self.height = window_width, window_height
 
         self.clock = None
@@ -59,7 +60,7 @@ class GUIBattleManager:
         while len(self.abilities) == 0 or self.abilities[-1][0] is None:
             pygame.time.delay(100)
 
-        result = self.check_for_click(self.abilities)
+        result = self.check_for_click(self.abilities, lambda rect, card: card.info != '' and card.info[0] != '-')
         self.clear_abilities = True
         return result
 
@@ -68,7 +69,8 @@ class GUIBattleManager:
 
     def create_character(self, team, index, info):
         if len(self.cards[team - 1]) < index:
-            self.cards[team - 1].append((None, CharacterCard(team, index, info)))
+            for i in range(index - len(self.cards[team - 1])):
+                self.cards[team - 1].append((None, CharacterCard(team, index, info)))
         else:
             self.cards[team - 1][index - 1][1].set_info(info)
 
@@ -122,7 +124,7 @@ class GUIBattleManager:
                 y_pos = 20 + safe_zone_height * index_in_row
                 offset = (self.height - (team_remainders[j] * safe_zone_height)) / 2 if in_last_row else 0
 
-                card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
+                card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, (card.team == self.active_team) and self.active, card_height)
                 self.cards[j][i] = (card_rect, card)
 
         for i, (_, ability) in enumerate(self.abilities):

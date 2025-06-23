@@ -74,7 +74,7 @@ class CharacterProcessor(PacketProcessor):
                 if packet.payload[1] == Variable.ABILITIES:
                     for abl in self.base_character.abilities:
                         reply_packet = Packet.generate_packet(packet.src_net, Target.BROADCAST)
-                        reply_packet.payload = (Command.REPLY, Variable.ABILITY, f'{abl.name}: {abl.cost}')
+                        reply_packet.payload = (Command.REPLY, Variable.ABILITY, f'{'-' if abl.cost > self.character_state.mp else ''} {abl.name}: {abl.cost}')
 
                         reply_packets.append(reply_packet)
                 else:

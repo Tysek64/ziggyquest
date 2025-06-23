@@ -14,7 +14,11 @@ class CharacterCard:
 
     def set_info(self, info=None):
         if info is not None:
+            prev_image = self.info['checksum']
             self.info = json.loads(info)
+            if prev_image != self.info['checksum']:
+                print('???')
+                self.image = ImageCache.fetch_image(self.info['checksum'], self.info['img_link'])
 
     def draw(self, ctx, x, y, active, allowed_height=300, info=None):
         if info is not None:
@@ -52,12 +56,18 @@ class CharacterCard:
 
         return card_rect
 
+    def __str__(self):
+        return str(self.info)
+
+    def __repr__(self):
+        return str(self.info)
+
 class AbilityCard:
     def __init__(self, info):
         self.info = info
 
     def draw(self, ctx, x, y):
-        card_rect = pygame.draw.rect(ctx, 'lightpink1', pygame.Rect(x, y, 500, 50))
+        card_rect = pygame.draw.rect(ctx, 'ivory4' if self.info == '' or self.info[0] == '-' else 'lightpink1', pygame.Rect(x, y, 500, 50))
         font = pygame.font.SysFont('monospace', 24)
 
         label = font.render(self.info, 1, 'black')

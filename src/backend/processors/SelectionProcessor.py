@@ -47,7 +47,7 @@ class SelectionProcessor(PacketProcessor):
 
     def get_available_characters(self) -> list[str]:
         return [
-            ''.join(f'{tier}: character: {character}\n'
+            f'{'-' if len(character_list) == 0 else ''} {tier}: ' + '; '.join(f'{character.name}'
                     for character in character_list
                     )            for tier, character_list in zip(self.tier_list, self.character_list)
         ]
