@@ -19,7 +19,7 @@ class ResizableTextDrawable(Drawable, ResizeMixin):
         if not self.centered:
             surface.blit(self.render, self.position)
         else:
-            new_pos = self.position[0] - self.render.get_width() / 2, self.position[1] # - self.render.get_height() / 2
+            new_pos = self.position[0] - self.render.get_width() / 2, self.position[1] - self.render.get_height() / 2 # - self.render.get_height() / 2
             surface.blit(self.render, new_pos)
 
     def get_rect(self):

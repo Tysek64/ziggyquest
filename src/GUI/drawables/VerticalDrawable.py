@@ -1,8 +1,9 @@
 from src.GUI.draw_utils import auto_draw
+from src.GUI.drawables.CompositeMixin import CompositeMixin
 from src.GUI.drawables.Drawable import Drawable
 from src.GUI.drawables.ResizeMixin import ResizeMixin
 import pygame
-class VerticalDrawable(ResizeMixin, Drawable):
+class VerticalDrawable(ResizeMixin, CompositeMixin, Drawable):
     def __init__(self,
                  position: pygame.Rect,
                  color: pygame.Color,
@@ -22,7 +23,7 @@ class VerticalDrawable(ResizeMixin, Drawable):
         self.contents = contents
         self.row_width = row_width
         self.scale_to_content = scale_to_content
-        self.__rendered_objects = []
+        self._rendered_objects = []
 
         if contents is not None:
             for element in contents:
@@ -34,7 +35,8 @@ class VerticalDrawable(ResizeMixin, Drawable):
         size = element.get_rect().size
         new_index = len(self.drawables)
         new_pos = (self.position.x + self.__inner_left_margin, self.position.y + self.__inner_top_margin)
-        new_surface = pygame.Surface(size)
+        new_surface = pygame.Surface(size,  pygame.SRCALPHA)
+        new_surface.fill((0, 0, 0, 0))
 
         if new_index > 0:
             last_element_surface = self.drawables[-1]
@@ -46,7 +48,7 @@ class VerticalDrawable(ResizeMixin, Drawable):
                 new_pos = (last_position[0] + last_element_surface.get_rect().topright[0] + self.__inner_left_margin,
                            last_position[1] + last_element_surface.get_rect().y)
 
-        self.__rendered_objects.append(element)
+        self._rendered_objects.append(element)
         self.drawables.append(new_surface)
         self.points.append(new_pos)
         if self.scale_to_content:
@@ -58,14 +60,12 @@ class VerticalDrawable(ResizeMixin, Drawable):
 
         self.reinit(self.parent_surface, ['position', 'points'], ['drawables'])
 
-        print('reinited')
 
     def draw(self, surface, *args, **kwargs):
         self.resize()
         auto_draw(surface, self.position, color=self.color)
-        for (element, inner_surface), position in zip(zip(self.__rendered_objects, self.drawables), self.points):
+        for (element, inner_surface), position in zip(zip(self._rendered_objects, self.drawables), self.points):
             auto_draw(inner_surface, element)
-            print(inner_surface.get_rect())
             auto_draw(surface, inner_surface, dest=position)
 
 
