@@ -1,17 +1,16 @@
 from src.backend.processors.PlayerProcessor import PlayerProcessor
-from src.backend.processors.CharacterProcessor import CharacterProcessor
 from src.backend.Packet import Packet
 from typing import Callable
 from src.backend.PacketEnums import Command, Variable
-from src.backend.processors.SelectionProcessor import SelectionProcessor
 
 def register_player(manager):
     def wrapper(player_creator: Callable[None, PlayerProcessor]):
         def inner(*args, **kwargs):
             def new_fn(packet: Packet):
-                print(packet)
+                #print(packet)
                 if packet.payload is not None and packet.payload[0] == Command.QUERY:
                     reply_packet = Packet(id=None, src_net=None, dst_net=packet.src_net, dst_host=0, payload=None)
+                    manager.active = True
                     if packet.payload[1] == Variable.CHARACTER:
                         manager.active_team = packet.src_net if packet.src_net != -1 else packet.dst_host
                         reply_packet.payload = (Command.REPLY, None, manager.get_selected_card())
@@ -19,6 +18,7 @@ def register_player(manager):
                         manager.active_team = 0
                         reply_packet.payload = (Command.REPLY, None, manager.get_selected_ability())
 
+                    manager.active = False
                     return [reply_packet]
                 elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
                     if packet.payload[2] == 0:
@@ -29,6 +29,7 @@ def register_player(manager):
                     print(packet.payload[2])
                     if packet.payload[1] == Variable.CHARACTER:
                         manager.create_character(packet.src_net, packet.id, packet.payload[2])
+                        print(manager.cards)
                     else:
                         manager.create_ability(packet.payload[2])
                 return []
