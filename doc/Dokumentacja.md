@@ -51,3 +51,8 @@ i receive_packet przez rozszerzanie klasy NetDevice. Urządzenia łączymy
 poprzez klasę Connection (warstwa abstrakcji, przez którą przesyłamy komunikaty).
 Połączenia są owiniętę w klasę Interface, która zapewnia nam adres sieci i adres
 hosta dla połączenia. 
+
+
+
+
+Menu powinno odpala serwer/klienta komenda
