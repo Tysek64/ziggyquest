@@ -6,7 +6,7 @@ class ResizableTextDrawable(Drawable, ResizeMixin):
     def __init__(self, position: tuple[int, int], message: str, color: pygame.Color,
                  parent_surface: pygame.Surface, size: int = 13, bold: bool = False, centered: bool = False) -> None:
         self.font = pygame.font.SysFont('monospace', bold=bold, size=size)
-        self.render = self.render = self.font.render(message, True, color)
+        self.render = self.font.render(message, True, color)
         self.message = message
         self.color = color
         self.position = position
@@ -21,4 +21,7 @@ class ResizableTextDrawable(Drawable, ResizeMixin):
         else:
             new_pos = self.position[0] - self.render.get_width() / 2, self.position[1] # - self.render.get_height() / 2
             surface.blit(self.render, new_pos)
+
+    def get_rect(self):
+        return self.render.get_rect()
 

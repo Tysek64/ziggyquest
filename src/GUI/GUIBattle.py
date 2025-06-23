@@ -59,7 +59,10 @@ class GUIBattleManager(GUIController):
         else:
             self.cards[team - 1][index - 1][1].info = info
 
-    def run_battle(self):
+    def setup(self, *args, **kwargs):
+        pass
+
+    def run(self):
         running = True
 
         with self.pygame_lock:
@@ -162,7 +165,7 @@ if __name__ == '__main__':
     arena.add_host(Host(NetInfo(0, 1), 'net0.player1', create_player()))
     arena.add_host(Host(NetInfo(0, 2), 'net0.player2', create_player()))
 
-    thread = threading.Thread(target=manager.run_battle, daemon=True)
+    thread = threading.Thread(target=manager.run, daemon=True)
     thread.start()
 
     while True:

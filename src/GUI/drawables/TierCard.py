@@ -11,6 +11,7 @@ import io
 class TierCard(ClickableMixin, ResizeMixin, Drawable):
     def __init__(self, character: Character, rect: pygame.Rect,
                  color: pygame.Color, parent_surface: pygame.Surface):
+        self.parent_surface = parent_surface
         self.rect = rect
         self.character = character
         self.color = color
@@ -26,7 +27,7 @@ class TierCard(ClickableMixin, ResizeMixin, Drawable):
         self.pic = ResizableImageDrawable(parent_surface, self.image, pic_coords)
         self.text = ResizableTextDrawable(text_coords, 'Łamacz kawy', pygame.Color('ivory3'),
                                           parent_surface, size=30, centered=True)
-        super().__init__(hitbox=rect, points=['rect'], surfaces=[], parent_surface=parent_surface)
+        super().__init__(hitbox=rect, points=['rect'], surfaces=[], parent_surface=self.parent_surface)
 
     def draw(self, surface, *args, **kwargs):
         self.resize()
@@ -37,3 +38,5 @@ class TierCard(ClickableMixin, ResizeMixin, Drawable):
     def on_click(self):
         pass
 
+    def get_rect(self):
+        return self.rect

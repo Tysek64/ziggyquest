@@ -21,3 +21,6 @@ class ImageDrawable(Drawable):
 
     def draw(self, surface: pygame.Surface, *args, **kwargs) -> None:
         surface.blit(self.image_surface, self.position, self.crop)
+
+    def get_rect(self):
+        return self.image_surface.get_rect()

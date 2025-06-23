@@ -49,6 +49,10 @@ def _(aaline, surface, *args, **kwargs):
 def _(aalines, surface, *args, **kwargs):
     pygame.draw.aalines(*args, **kwargs | aalines.to_dict(), surface=surface)
 
+@_drawing_dispatch.register(pygame.Surface)
+def _(inner_surface, surface, *args, **kwargs):
+    surface.blit(*args, **kwargs, source=inner_surface)
+
 @_drawing_dispatch.register(Drawable)
 def _(drawable, surface, *args, **kwargs):
     drawable.draw(surface, *args, **kwargs)

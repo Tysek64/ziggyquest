@@ -58,9 +58,11 @@ class GUISelectionManager(GUIController):
         return result
 
     def create_tier(self, info):
+        print(info)
         self.abilities.append((None, AbilityCard(info)))
 
     def create_character(self, info):
+        print('INFO\n', info, '\nINFO')
         self.cards.append((None, AbilityCard(info)))
 
     def setup(self, *args, **kwargs):
@@ -89,9 +91,10 @@ class GUISelectionManager(GUIController):
             self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
             self.clock = pygame.time.Clock()
 
-            self.cards = [(None, CharacterCard(host.net_info.net_addr, host.net_info.host_addr, host.packet_processor))
-                          for host in self.arena.hosts.values() if
-                          isinstance(host.packet_processor, CharacterProcessor)]
+            # self.cards = [(None, CharacterCard(host.net_info.net_addr, host.net_info.host_addr, host.packet_processor))
+            #               for host in self.arena.hosts.values() if
+            #               isinstance(host.packet_processor, CharacterProcessor)]
+            self.cards = []
 
             while running:
                 running = len(pygame.event.get(pygame.QUIT)) == 0
