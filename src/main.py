@@ -79,7 +79,7 @@ def setup_server(ip_addr):
                 change_topology(selector.teams[1], selector.teams[2])
                 arena.print_status()
 
-    thread = threading.Thread(target=run)
+    thread = threading.Thread(target=run, daemon=True)
     thread.start()
 
     manager.run_battle()
@@ -99,7 +99,7 @@ def setup_client(ip_addr):
         while True:
             arena.receive_packet()
 
-    thread = threading.Thread(target=run)
+    thread = threading.Thread(target=run, daemon=True)
     thread.start()
 
     manager.run_battle()

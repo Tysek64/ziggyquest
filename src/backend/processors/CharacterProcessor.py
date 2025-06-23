@@ -63,7 +63,7 @@ class CharacterProcessor(PacketProcessor):
                         reply_packet.payload = (Command.FAIL, Variable.ABILITY, None)
                         reply_packets.append(reply_packet)
             elif packet.payload[0] == Command.END_TURN:
-                self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage))
+                self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage - self.base_character.defense))
                 self.character_state.damage = 0
 
                 if self.character_state.hp == 0:
@@ -98,7 +98,7 @@ class CharacterProcessor(PacketProcessor):
                         new_val = current_val - amount
 
                     if packet.payload[1] == Variable.ATTACK:
-                        self.base_character.damage = new_val * 3
+                        self.base_character.damage = new_val * 3 + 2
 
                     setattr(self.character_state, attr_name, max(min(new_val, maximum), minimum))
 
