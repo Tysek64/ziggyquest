@@ -46,8 +46,7 @@ class Switch(NetDevice):
         elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
             self.dead_characters += 1
             if self.dead_characters == len(self.ports):
-                print('AAAAAAA')
-                end_game_packet = Packet.generate_packet(-1, 0)
+                end_game_packet = Packet.generate_packet(-1, Target.BROADCAST)
                 end_game_packet.src_net = self.net_info.net_addr
                 end_game_packet.payload = (Command.END_GAME, None, None)
                 self.receive_packet(end_game_packet)

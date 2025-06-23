@@ -26,7 +26,6 @@ class ClientSocket(PacketProcessor):
         net_info_parsed = json.loads(net_info[0].decode(self.encoding))
 
     def receive_packet(self):
-        print('a')
         packet = self.socket.recvfrom(1024)[0]
         deserialized = Packet.deserialize(json.loads(packet.decode(self.encoding)))
 

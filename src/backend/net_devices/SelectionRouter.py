@@ -44,7 +44,11 @@ class SelectionRouter(BaseRouter):
                 #print(f'For {self}, the turn is over!\n')
                 self.end_turn()
         elif packet.payload is not None and packet.payload[0] == Command.REPLY and packet.src_net != 0:
-            print(packet.payload[2])
+            relay_packet = Packet.generate_packet(0, self.current_team)
+            relay_packet.id = packet.id
+            relay_packet.src_net = packet.src_net
+            relay_packet.payload = packet.payload
+            self.receive_packet(relay_packet)
         else: # REPLY from player
             if self.current_move[1] is None:
                 self.current_move = (self.current_move[0], packet.payload[2], None)

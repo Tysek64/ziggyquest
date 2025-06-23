@@ -1,7 +1,7 @@
 from src.backend.Packet import Packet
 from src.backend.processors.PacketProcessor import PacketProcessor
 from src.backend.character.Character import Character
-from src.backend.PacketEnums import Command, Variable
+from src.backend.PacketEnums import Command, Variable, Target
 from copy import deepcopy
 
 # liste charaketrów z zewnatrz
@@ -23,20 +23,26 @@ class SelectionProcessor(PacketProcessor):
                    reply_packets.append(reply_packet)
 
             elif packet.payload[1] == Variable.TIER:
-                for character in self.get_characters_tier(packet.payload[2]):
+                for i, character in enumerate(self.get_characters_tier(packet.payload[2]), start=1):
                     reply_packet = Packet.generate_packet(packet.src_net, 0)
+                    reply_packet.id = i
                     reply_packet.payload = (Command.REPLY, Variable.CHARACTER, character)
                     reply_packets.append(reply_packet)
 
         elif packet.payload[0] == Command.EXECUTE:
             team, tier, character = packet.payload[2]
+            character -= 1
             try:
                 self.teams[team].append(self.character_list[tier][character])
             except KeyError:
                 self.teams[team] = [self.character_list[tier][character]]
             self.character_list[tier].pop(character)
 
-        self.notify_change_stage()
+        if self.notify_change_stage():
+            select_end_packet = Packet.generate_packet(0, Target.BROADCAST)
+            select_end_packet.payload = (Command.END_GAME, None, 0)
+            reply_packets.append(select_end_packet)
+
         return reply_packets
 
     def get_available_characters(self) -> list[str]:
@@ -47,7 +53,7 @@ class SelectionProcessor(PacketProcessor):
         ]
 
     def get_characters_tier(self, tier: int) -> list[str]:
-        return [f'character ID: {character_id}\ncharacter: {character}' for character_id, character in enumerate(self.character_list[tier])]
+        return [character.__repr__() for character in self.character_list[tier]]
 
 
     def notify_change_stage(self) -> bool:

@@ -18,6 +18,8 @@ class GUIBattleManager(GUIController):
         self.cards = [[], []]
         self.abilities = []
         self.clear_abilities = False
+        self.clear_cards = False
+        self.in_battle = False
         self.active_team = 1
         self.size = self.width, self.height = window_width, window_height
 
@@ -26,27 +28,37 @@ class GUIBattleManager(GUIController):
         self.pygame_lock = pygame_lock
         self.winner = 0
 
-    def check_for_click(self, rects, filters):
+    def transfer_to_battle(self):
+        self.in_battle = True
+        self.abilities = []
+        self.cards = [[], []]
+
+    def check_for_click(self, rects, filter=lambda rect, card: True):
         while True:
             events = pygame.event.get(pygame.MOUSEBUTTONDOWN, pump=False)
             for event in events:
                 pos = pygame.mouse.get_pos()
-                for i, (rect, _) in enumerate(filter(filters, rects)):
-                    if rect.collidepoint(pos):
+                for i, (rect, card) in enumerate(rects):
+                    if rect.collidepoint(pos) and filter(rect, card):
                         return i
             pygame.time.delay(100)
 
     def get_selected_card(self):
-        while self.cards[-1][-1][0] is None:
+        if not self.in_battle:
+            self.active_team = 1
+
+        while len(self.cards[self.active_team - 1]) == 0 or self.cards[self.active_team - 1][-1][0] is None:
             pygame.time.delay(100)
 
-        return 1 + self.check_for_click(self.cards[self.active_team - 1], lambda _: True)
+        result = 1 + self.check_for_click(self.cards[self.active_team - 1], lambda rect, card: card.info['hp'] > 0)
+        self.clear_cards = True
+        return result
 
     def get_selected_ability(self):
-        while self.abilities[-1][0] is None:
+        while len(self.abilities) == 0 or self.abilities[-1][0] is None:
             pygame.time.delay(100)
 
-        result = self.check_for_click(self.abilities, lambda _: True)
+        result = self.check_for_click(self.abilities)
         self.clear_abilities = True
         return result
 
@@ -57,7 +69,7 @@ class GUIBattleManager(GUIController):
         if len(self.cards[team - 1]) < index:
             self.cards[team - 1].append((None, CharacterCard(team, index, info)))
         else:
-            self.cards[team - 1][index - 1][1].info = info
+            self.cards[team - 1][index - 1][1].set_info(info)
 
     def setup(self, *args, **kwargs):
         pass
@@ -80,6 +92,10 @@ class GUIBattleManager(GUIController):
                     if self.clear_abilities:
                         self.abilities = []
                         self.clear_abilities = False
+
+                    if self.clear_cards and not self.in_battle:
+                        self.cards = [[], []]
+                        self.clear_cards = False
                 else:
                     self.render_end_screen()
 
@@ -98,29 +114,18 @@ class GUIBattleManager(GUIController):
         card_width = 2 * card_height / 3
         safe_zone_width = card_width + 40
 
-        for i, (_, card) in enumerate(self.cards[0]):
-            row_number = i // 3
-            index_in_row = i % 3
-            in_last_row = len(self.cards[card.team - 1]) - 3 * row_number == team_remainders[card.team - 1]
+        for j, cards in enumerate(self.cards):
+            for i, (_, card) in enumerate(self.cards[j]):
+                row_number = i // 3
+                index_in_row = i % 3
+                in_last_row = len(cards) - 3 * row_number == team_remainders[j]
 
-            x_pos = safe_zone_width * row_number
-            y_pos = 20 + safe_zone_height * index_in_row
-            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
+                x_pos = safe_zone_width * row_number
+                y_pos = 20 + safe_zone_height * index_in_row
+                offset = (self.height - (team_remainders[j] * safe_zone_height)) / 2 if in_last_row else 0
 
-            card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
-            self.cards[0][i] = (card_rect, card)
-
-        for i, (_, card) in enumerate(self.cards[1]):
-            row_number = i // 3
-            index_in_row = i % 3
-            in_last_row = len(self.cards[card.team - 1]) - 3 * row_number == team_remainders[card.team - 1]
-
-            x_pos = safe_zone_width * row_number
-            y_pos = 20 + safe_zone_height * index_in_row
-            offset = (self.height - (team_remainders[card.team - 1] * safe_zone_height)) / 2 if in_last_row else 0
-
-            card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
-            self.cards[1][i] = (card_rect, card)
+                card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, card.team == self.active_team, card_height)
+                self.cards[j][i] = (card_rect, card)
 
         for i, (_, ability) in enumerate(self.abilities):
             card_rect = ability.draw(self.screen, self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)

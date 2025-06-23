@@ -57,8 +57,8 @@ class BattleRouter(BaseRouter):
                 else:
                     raise ValueError(f'Router {self} received a reply to no asked questions: {packet}')
         elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
-            end_game_packet = Packet.generate_packet(0, packet.src_net)
-            end_game_packet.payload = (Command.END_GAME, None, None)
+            end_game_packet = Packet.generate_packet(0, Target.BROADCAST)
+            end_game_packet.payload = (Command.END_GAME, None, packet.src_net)
 
             self.send_packet(end_game_packet)
         else:
