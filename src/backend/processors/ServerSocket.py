@@ -36,10 +36,9 @@ class ServerSocket(PacketProcessor):
         self.socket.close()
 
     def process_packet(self, packet: Packet):
-        print(f'Sending {packet}')
         self.client.sendall(json.dumps(packet.serialize()).encode(self.encoding))
-        received = self.decode_packets(self.client.recv(2048))
-        return received
+        received = self.client.recv(2048)
+        return self.decode_packets(received)
 
     def decode_packets(self, repr: bytes) -> Packet:
         result = []

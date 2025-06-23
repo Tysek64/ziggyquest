@@ -9,8 +9,8 @@ def register_player(manager):
     def wrapper(player_creator: Callable[None, PlayerProcessor]):
         def inner(*args, **kwargs):
             def new_fn(packet: Packet):
+                print(packet)
                 if packet.payload is not None and packet.payload[0] == Command.QUERY:
-                    print(packet)
                     reply_packet = Packet(id=None, src_net=None, dst_net=packet.src_net, dst_host=0, payload=None)
                     if packet.payload[1] == Variable.CHARACTER:
                         manager.active_team = packet.src_net if packet.src_net != -1 else packet.dst_host
@@ -21,36 +21,20 @@ def register_player(manager):
 
                     return [reply_packet]
                 elif packet.payload is not None and packet.payload[0] == Command.END_GAME:
-                    manager.announce_winner(3 - packet.dst_host)
+                    if packet.payload[2] == 0:
+                        manager.transfer_to_battle()
+                    else:
+                        manager.announce_winner(3 - packet.payload[2])
                 elif packet.payload is not None and packet.payload[0] == Command.REPLY:
                     print(packet.payload[2])
-                    if packet.payload[1] == Variable.ABILITY:
-                        manager.create_ability(packet.payload[2])
-                    else:
+                    if packet.payload[1] == Variable.CHARACTER:
                         manager.create_character(packet.src_net, packet.id, packet.payload[2])
+                    else:
+                        manager.create_ability(packet.payload[2])
                 return []
 
             player = player_creator(*args, **kwargs)
             player.process_packet = new_fn
             return player
-        return inner
-    return wrapper
-
-def register_selection(manager):
-    def wrapper(selection_creator: Callable[None, SelectionProcessor]):
-        def inner(*args, **kwargs):
-            def new_fn(packet: Packet):
-                result = character._old_process_packet(packet)
-                for res_packet in result:
-                    if res_packet.payload[0] == Command.REPLY:
-                        if res_packet.payload[1] == Variable.TIER:
-                            manager.create_tier(res_packet.payload[2])
-                        else:
-                            manager.create_character(res_packet.payload[2])
-                return result
-            character = selection_creator(*args, **kwargs)
-            character._old_process_packet = character.process_packet
-            character.process_packet = new_fn
-            return character
         return inner
     return wrapper

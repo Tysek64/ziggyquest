@@ -8,17 +8,17 @@ class CharacterCard:
     def __init__(self, team, index, info):
         self.team = team
         self.index = index
-        self.info = info
-        parsed_info = json.loads(info)
+        self.info = json.loads(info)
 
-        self.image = ImageCache.fetch_image(parsed_info['checksum'], parsed_info['img_link'])
+        self.image = ImageCache.fetch_image(self.info['checksum'], self.info['img_link'])
+
+    def set_info(self, info=None):
+        if info is not None:
+            self.info = json.loads(info)
 
     def draw(self, ctx, x, y, active, allowed_height=300, info=None):
         if info is not None:
-            self.info = info
-            print(f'Card received new info: {info}')
-
-        status = json.loads(self.info)
+            self.info = json.loads(info)
 
         allowed_width = 2 * allowed_height / 3
         base_margin = 0.05 * allowed_width
@@ -32,17 +32,17 @@ class CharacterCard:
         text_offset = font_size + inner_margin
         image_offset = image_height + inner_margin
 
-        card_rect = pygame.draw.rect(ctx, 'lightpink1' if active else 'ivory4' , pygame.Rect(x, y, allowed_width, allowed_height))
+        card_rect = pygame.draw.rect(ctx, 'ivory4' if self.info['hp'] == 0 else ('lightpink1' if active else 'ivory4') , pygame.Rect(x, y, allowed_width, allowed_height))
         font = pygame.font.SysFont('monospace', font_size)
         bold_font = pygame.font.SysFont('monospace', bold=True, size=font_size)
 
-        label = bold_font.render(status['name'], 1, 'black')
+        label = bold_font.render(self.info['name'], 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin))
 
-        label = font.render(f'HP: {status['hp']}', 1, 'black')
+        label = font.render(f'HP: {self.info['hp']}', 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin + text_offset + image_offset))
 
-        label = font.render(f'MP: {status['mp']}', 1, 'black')
+        label = font.render(f'MP: {self.info['mp']}', 1, 'black')
         ctx.blit(label, (x + base_margin, y + base_margin + 2 * text_offset + image_offset))
 
         image = pygame.image.load(io.BytesIO(self.image))
