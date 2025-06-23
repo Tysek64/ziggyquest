@@ -35,8 +35,6 @@ class VerticalDrawable(ResizeMixin, Drawable):
         new_index = len(self.drawables)
         new_pos = (self.position.x + self.__inner_left_margin, self.position.y + self.__inner_top_margin)
         new_surface = pygame.Surface(size)
-        if element.__getattribute__('parent_surface') is not None:
-            element.parent_surface = new_surface
 
         if new_index > 0:
             last_element_surface = self.drawables[-1]
@@ -56,6 +54,8 @@ class VerticalDrawable(ResizeMixin, Drawable):
             max_row_sum = max([sum([drawable.get_width() for drawable in row]) for row in row_list])
             self.position.size = (max_row_sum + (self.row_width + 1) * self.__inner_left_margin, self.position.size[1])
 
+
+
         self.reinit(self.parent_surface, ['position', 'points'], ['drawables'])
 
         print('reinited')
@@ -65,6 +65,7 @@ class VerticalDrawable(ResizeMixin, Drawable):
         auto_draw(surface, self.position, color=self.color)
         for (element, inner_surface), position in zip(zip(self.__rendered_objects, self.drawables), self.points):
             auto_draw(inner_surface, element)
+            print(inner_surface.get_rect())
             auto_draw(surface, inner_surface, dest=position)
 
 

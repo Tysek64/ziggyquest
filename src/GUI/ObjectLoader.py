@@ -54,7 +54,11 @@ class ObjectLoader:
                                   TierCard(test_object, pygame.Rect(0, 0, 300, 400), pygame.Color(0, 0, 255),
                                            parent_surface),
                                   TierCard(test_object, pygame.Rect(0, 0, 300, 400), pygame.Color(0, 0, 255),
-                                           parent_surface)
+                                           parent_surface),
+                                  ResizableImageDrawable(pygame.display.get_surface(),
+                                                         Path('D:/python_laby/ziggyquest/src/GUI/resources/Host.jpg'),
+                                                         (0, 0), (300, 300))
                               ]), {}),
+
 
         ]
