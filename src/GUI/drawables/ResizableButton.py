@@ -21,6 +21,7 @@ class ResizableButton(Drawable, ResizeMixin, ClickableMixin):
         super().__init__(points=['position'], surfaces=[], parent_surface=parent_surface, hitbox=self.position)
 
     def draw(self, surface, *args, **kwargs):
+        self.resize()
         auto_draw(surface, self.position, color=self.color)
         auto_draw(surface, self.text)
 
