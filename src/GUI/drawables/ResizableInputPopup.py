@@ -1,6 +1,7 @@
 from typing import Callable
 
 from src.GUI.draw_utils import auto_draw
+from src.GUI.drawables.Checkbox import Checkbox
 from src.GUI.drawables.CompositeMixin import CompositeMixin
 from src.GUI.drawables.EditableTextField import EditableTextField
 from src.GUI.drawables.ResizeMixin import ResizeMixin
@@ -12,6 +13,7 @@ class ResizableInputPopup(ResizeMixin, CompositeMixin):
     def __init__(self, position: pygame.Rect, text: str, color: pygame.Color,
                  on_cancel: Callable,
                  on_accept: Callable,
+                 on_toggle: Callable,
                  parent_surface: pygame.Surface,
                  text_color: pygame.Color = pygame.Color(0, 0, 0), default_value: str = ''):
         self.position = position
@@ -43,9 +45,17 @@ class ResizableInputPopup(ResizeMixin, CompositeMixin):
         self.accept_button = ResizableButton(pygame.Rect(accept_pos, self.__button_size), 'Confirm',
                                              pygame.Color(128, 255, 0), on_accept, parent_surface)
 
+        # Position to the left of accept_button, with same vertical alignment
+        checkbox_size = (self.__button_size[1], self.__button_size[1])  # square checkbox
+        checkbox_pos = (
+            self.accept_button.position.left - self.__left_margin - checkbox_size[0],
+            self.accept_button.position.top
+        )
 
-        self._rendered_objects = [self.input, self.accept_button, self.cancel_button]
-        self.points = [self.input.position.topleft, self.accept_button.position.topleft, self.cancel_button.position.topleft]
+        self.checkbox = Checkbox(pygame.Rect(checkbox_pos, checkbox_size), on_toggle, parent_surface)
+
+        self._rendered_objects = [self.input, self.accept_button, self.cancel_button, self.checkbox]
+        self.points = [self.input.position.topleft, self.accept_button.position.topleft, self.cancel_button.position.topleft, self.checkbox.position.topleft]
 
         super().__init__(points=['position'], surfaces=[], parent_surface=parent_surface)
 
@@ -58,6 +68,7 @@ class ResizableInputPopup(ResizeMixin, CompositeMixin):
         auto_draw(surface, self.input)
         auto_draw(surface, self.cancel_button)
         auto_draw(surface, self.accept_button)
+        auto_draw(surface, self.checkbox)
 
     def get_rect(self) -> pygame.Rect:
         return self.position
