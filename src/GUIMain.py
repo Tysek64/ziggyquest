@@ -16,8 +16,12 @@ import sys
 def change_to_battle(manager: WindowManager, server):
     manager.close()
     if server is not None:
+        pygame.quit()
+        print([sys.executable, "-m", "src.main", "--server", server])
         subprocess.run([sys.executable, "-m", "src.main", "--server", server])
     else:
+        pygame.quit()
+        print([sys.executable, "-m", "src.main", "-n", "0.0.0.0"])
         subprocess.run([sys.executable, "-m", "src.main", "-n", "0.0.0.0"])
 
 

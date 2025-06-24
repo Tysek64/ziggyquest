@@ -80,7 +80,7 @@ def setup_server(ip_addr, single_player=False):
     thread = threading.Thread(target=run, daemon=True)
     thread.start()
 
-    manager.run_battle()
+    manager.run()
 
     manager.close()
     sys.exit()
@@ -100,7 +100,7 @@ def setup_client(ip_addr):
     thread = threading.Thread(target=run, daemon=True)
     thread.start()
 
-    manager.run_battle()
+    manager.run()
 
     manager.close()
     sys.exit()
