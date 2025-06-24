@@ -53,7 +53,7 @@ class SelectionProcessor(PacketProcessor):
         ]
 
     def get_characters_tier(self, tier: int) -> list[str]:
-        return [character.__repr__() for character in self.character_list[tier]]
+        return [character.full_json() for character in self.character_list[tier]]
 
 
     def notify_change_stage(self) -> bool:
