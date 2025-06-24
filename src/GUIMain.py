@@ -4,6 +4,7 @@ from src.GUI.SurfaceRenderer import SurfaceRenderer
 from src.GUI.WindowManager import WindowManager
 import pygame
 
+from src.GUI.drawables.Drawable import Drawable
 from src.GUI.drawables.EditableTextField import EditableTextField
 from src.GUI.drawables.ResizableButton import ResizableButton
 from src.GUI.drawables.ResizableImageDrawable import ResizableImageDrawable
@@ -15,8 +16,10 @@ import sys
 
 def change_to_battle(manager: WindowManager, server):
     manager.close()
+    pygame.quit()
+    pygame.init()
     if server is not None:
-        subprocess.run([sys.executable, "-m", "src.main", "--server", server])
+        subprocess.run([sys.executable, "-m", "src.main", server])
     else:
         subprocess.run([sys.executable, "-m", "src.main", "-n", "0.0.0.0"])
 
@@ -33,7 +36,13 @@ if __name__ == '__main__':
 
 
     parent_surface = pygame.display.get_surface()
-    render_objects = [
+
+    input_popup = ResizableInputPopup(pygame.Rect(450, 150, 400, 200), 'Enter server ip:', pygame.Color('pink'),
+                                      lambda: print('cancelled'), lambda: print('accepted'), parent_surface), {}
+    input_popup[0].cancel_button.on_click = lambda: renderer.render_objects.pop()
+    input_popup[0].accept_button.on_click = lambda: change_to_battle(menu, input_popup[0].input.rendered_text.message)
+
+    render_objects: list[tuple[Drawable, dict]] = [
         (VerticalDrawable(position=pygame.Rect(480, 0, 400, parent_surface.get_height()),
                           color=pygame.Color('ivory2'), parent_surface=parent_surface,
                           contents=[
@@ -42,18 +51,13 @@ if __name__ == '__main__':
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Singleplayer', pygame.Color('pink'),
                                               (lambda: change_to_battle(menu, None)), parent_surface),
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Multiplayer', pygame.Color('pink'),
-                                              (lambda: True), parent_surface),
+                                              (lambda: renderer.render_objects.append(input_popup)), parent_surface),
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Exit', pygame.Color('pink'),
                                               (lambda: menu.close()), parent_surface),
                           ], row_width=1, scale_to_content=True), {}),
 
     ]
 
-    input_popup = ResizableInputPopup(pygame.Rect(0, 0, 400, 200), 'Enter server ip:', pygame.Color('pink'),
-                             lambda: print('cancelled'), lambda: print('accepted'), parent_surface), {}
-    input_popup[0].cancel_button.on_click = lambda: renderer.render_objects.pop()
-    input_popup[0].accept_button.on_click = lambda: change_to_battle(menu, input_popup[0].input.rendered_text.message)
-    render_objects.append(input_popup)
 
     for renderer in renderers:
         for render_object in render_objects:
