@@ -49,7 +49,7 @@ class SelectionRouter(BaseRouter):
             relay_packet.src_net = packet.src_net
             relay_packet.payload = packet.payload
             self.receive_packet(relay_packet)
-        else: # REPLY from player
+        elif packet.payload is not None: # REPLY from player
             if self.current_move[1] is None:
                 self.current_move = (self.current_move[0], packet.payload[2], None)
                 packet_ = Packet.generate_packet(1, 1)
@@ -66,4 +66,5 @@ class SelectionRouter(BaseRouter):
                 packet = Packet.generate_packet(1, 1)
                 packet.payload = (Command.EXECUTE, None, self.current_move)
                 self.send_packet(packet)
-
+        else:
+            raise ValueError(f'Router {self} received {packet} for some reason')

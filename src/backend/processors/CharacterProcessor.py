@@ -3,6 +3,7 @@ from src.backend.character.Character import Character
 from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command, Variable, Value, Target
 from copy import deepcopy
+import random
 
 # holds state and responds to packets
 class CharacterProcessor(PacketProcessor):
@@ -63,7 +64,8 @@ class CharacterProcessor(PacketProcessor):
                         reply_packet.payload = (Command.FAIL, Variable.ABILITY, None)
                         reply_packets.append(reply_packet)
             elif packet.payload[0] == Command.END_TURN:
-                self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage - self.base_character.defense))
+                if random.randint(0, 500) >= self.character_state.speed:
+                    self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage - self.base_character.defense))
                 self.character_state.damage = 0
 
                 if self.character_state.hp == 0:

@@ -64,23 +64,6 @@ class BattleRouter(BaseRouter):
         else:
             raise ValueError(f'Router {self} received {packet} for some reason')
 
-    def send_packet(self, packet: Packet):
-        packet.src_net = self.net_info.net_addr
-        self.receive_packet(packet)
-
-    def receive_packet(self, packet: Packet):
-        success = False
-        for port in self.ports:
-            if port.address.net_addr == packet.dst_net:
-                if success:
-                    raise ConnectionError(f'Two networks with the same address connected to router {self}')
-                else:
-                    self.finished_turn[port.address.net_addr] = False
-                    port.send_packet(packet, sender=self)
-                    success = True
-        if not success:
-            self.process_packet(packet)
-
     def query_character(self):
         packet = Packet.generate_packet(self.current_team, Target.BROADCAST)
         packet.payload = (Command.QUERY, Variable.STATS, "")
