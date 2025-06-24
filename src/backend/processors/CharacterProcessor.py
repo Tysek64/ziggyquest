@@ -64,7 +64,7 @@ class CharacterProcessor(PacketProcessor):
                         reply_packet.payload = (Command.FAIL, Variable.ABILITY, None)
                         reply_packets.append(reply_packet)
             elif packet.payload[0] == Command.END_TURN:
-                if random.randint(0, 500) < self.character_state.speed:
+                if random.randint(0, 500) >= self.character_state.speed:
                     self.character_state.hp = max(0, self.character_state.hp - max(0, self.character_state.damage - self.base_character.defense))
                 self.character_state.damage = 0
 
