@@ -17,8 +17,6 @@ from pathlib import Path
 import threading
 
 def setup_server(ip_addr, single_player=False):
-    [ziggy, kibel, cofee] = CharacterFactory().make_characters(Path('./characters'))
-
     manager = GUIBattleManager(threading.Lock())
     arena = Battle(SelectionRouter(NetInfo(-1, 1), hostname='router'))
     characters, tiers = load_characters(Path('./characters'))
