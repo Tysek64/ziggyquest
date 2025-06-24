@@ -15,6 +15,8 @@ class ResizableInputPopup(ResizeMixin, CompositeMixin):
                  parent_surface: pygame.Surface,
                  text_color: pygame.Color = pygame.Color(0, 0, 0), default_value: str = ''):
         self.position = position
+        self.on_cancel = on_cancel
+        self.on_accept = on_accept
         self.color = color
         self.__top_margin = 5
         self.__left_margin = 20
