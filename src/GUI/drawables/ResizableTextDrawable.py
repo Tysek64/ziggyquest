@@ -4,17 +4,23 @@ import pygame
 
 class ResizableTextDrawable(Drawable, ResizeMixin):
     def __init__(self, position: tuple[int, int], message: str, color: pygame.Color,
-                 parent_surface: pygame.Surface, size: int = 13, bold: bool = False, centered: bool = False) -> None:
+                 parent_surface: pygame.Surface, size: int = 13, bold: bool = False, centered: bool = False,
+                 editable: bool = False) -> None:
+        self.parent_surface = parent_surface
         self.font = pygame.font.SysFont('monospace', bold=bold, size=size)
         self.render = self.font.render(message, True, color)
         self.message = message
         self.color = color
         self.position = position
         self.centered = centered
+        self.editable = editable
         super().__init__(points=['position'], surfaces=['render'], parent_surface=parent_surface)
+
+
 
     def draw(self, surface, *args, **kwargs):
         self.render = self.font.render(self.message, True, self.color)
+        if self.editable: self.reinit(points=['position'], surfaces=['render'], parent_surface=self.parent_surface)
         self.resize()
         if not self.centered:
             surface.blit(self.render, self.position)
