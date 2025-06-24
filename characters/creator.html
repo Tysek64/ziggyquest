@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ziggqyquest character creator</title>
+		<meta charset="utf-8">
+		<style>
+			h2 {
+				font-size: 26pt;
+			}
+
+			input {
+				font-size: 20pt;
+				width: 200px;
+				text-align: right;
+				font-family: monospace;
+			}
+
+			select {
+				font-size: 20pt;
+				width: 150px;
+				text-align: right;
+				font-family: monospace;
+			}
+
+			p, button, td, th, textarea {
+				font-size: 20pt;
+				text-align: center;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+
+			td {
+				text-align: right;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<h2>Ziggyquest character creator</h2>
+			<table id="baseStats">
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>name: </td>
+					<td><input id="name"></input></td>
+				</tr>
+				<tr>
+					<td>image link: </td>
+					<td><input id="img_link"></input></td>
+				</tr>
+				<tr>
+					<td>HP: </td>
+					<td><input id="HP"></input></td>
+				</tr>
+				<tr>
+					<td>MP: </td>
+					<td><input id="MP"></input></td>
+				</tr>
+				<tr>
+					<td>attack: </td>
+					<td><input id="attack"></input></td>
+				</tr>
+				<tr>
+					<td>defense: </td>
+					<td><input id="defense"></input></td>
+				</tr>
+				<tr>
+					<td>speed: </td>
+					<td><input id="speed"></input></td>
+				</tr>
+			</table>
+			<table id="abilities">
+				<tr>
+					<th>name: </th>
+					<th>cost: </th>
+					<th colspan="3">trigger: </th>
+					<th>steps: </th>
+				</tr>
+				<tr>
+					<td><input></input></td>
+					<td><input></input></td>
+					<td><input type="checkbox" style="width: 24px; height: 24px;"></input></td>
+					<td><select>
+						<option value="set">SET</option>
+						<option value="increase">INCREASE</option>
+						<option value="decrease">DECREASE</option>
+						<option value="null">NULL</option>
+					</select></td>
+					<td><select>
+						<option value="damage">DAMAGE</option>
+						<option value="hp">HP</option>
+						<option value="mp">MP</option>
+						<option value="attack">ATTACK</option>
+						<option value="defense">DEFENSE</option>
+						<option value="speed">SPEED</option>
+						<option value="null">NULL</option>
+					</select></td>
+					<td><table id="ability">
+						<tr>
+							<th>Team</th>
+							<th>Target</th>
+							<th>Command</th>
+							<th>Variable</th>
+							<th colspan="2">Value</th>
+						</tr>
+						<tr>
+							<td colspan="7"><button onclick="addStep(this)" style="width: 100%;">+</button></td>
+						</tr>
+					</table></td>
+					<td><button onclick="deleteRow(this)">-</button></td>
+				</tr>
+				<tr>
+					<td colspan="7"><button onclick="addAbility(this)" style="width: 100%;">+</button></td>
+				</tr>
+			</table>
+			<button onclick="generateJSON()">Generate JSON</button>
+			<p><textarea id="result"></textarea></p>
+		</center>
+		<script src="creator.js"></script>
+	</body>
+</html>
