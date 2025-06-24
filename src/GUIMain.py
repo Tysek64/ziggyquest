@@ -36,7 +36,7 @@ if __name__ == '__main__':
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Exit', pygame.Color('pink'),
                                               (lambda: menu.close()), parent_surface),
                           ], row_width=1, scale_to_content=True), {}),
-        (ResizableInputPopup(pygame.Rect(0, 0, 200, 100), 'Enter server ip:', pygame.Color('pink'),
+        (ResizableInputPopup(pygame.Rect(0, 0, 400, 200), 'Enter server ip:', pygame.Color('pink'),
                              lambda: print('cancelled'), lambda: print('accepted'), parent_surface), {}),
     ]
 
