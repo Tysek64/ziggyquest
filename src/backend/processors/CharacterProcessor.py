@@ -85,19 +85,19 @@ class CharacterProcessor(PacketProcessor):
 
                         reply_packets.append(reply_packet)
                 else:
+                    reply_packet = Packet.generate_packet(packet.src_net, 3 - packet.dst_net)
+                    reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
+                                            #self.base_character.name if packet.payload[1] == Variable.NAME else
+                                            self.character_state.__repr__())
+
+                    reply_packets.append(reply_packet)
                     reply_packet = Packet.generate_packet(packet.src_net, packet.dst_net)
+
                     char_json = json.loads(self.character_state.full_json())
                     char_json['state'] = sum([v for v in self.names_queue.values()], [])
                     reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
                                             #self.base_character.name if packet.payload[1] == Variable.NAME else
                                             json.dumps(char_json))
-
-                    reply_packets.append(reply_packet)
-
-                    reply_packet = Packet.generate_packet(packet.src_net, 3 - packet.dst_net)
-                    reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
-                                            #self.base_character.name if packet.payload[1] == Variable.NAME else
-                                            self.character_state.__repr__())
 
                     reply_packets.append(reply_packet)
             elif packet.payload[0] in (Command.SET, Command.INCREASE, Command.DECREASE):

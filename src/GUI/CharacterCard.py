@@ -42,6 +42,7 @@ class CharacterCard:
         bold_font = pygame.font.SysFont('monospace', bold=True, size=font_size)
 
         label = bold_font.render(self.info['name'], 1, 'black')
+        label = pygame.transform.scale(label, (min(label.get_width(), allowed_width - 2 * base_margin), label.get_height()))
         ctx.blit(label, (x + base_margin, y + base_margin), (0, 0, allowed_width - base_margin, label.get_height()))
 
         label = font.render(f'HP:{self.info['hp']:3d} MP:{self.info['mp']:2d}', 1, 'black')
