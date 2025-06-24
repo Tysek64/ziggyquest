@@ -7,7 +7,7 @@ import pygame
 
 class EditableTextField(Drawable, ResizeMixin, FocusableMixin):
     def __init__(self, position: pygame.Rect, parent_surface: pygame.Surface,
-                 color: pygame.Color = pygame.Color(255, 0, 255),
+                 color: pygame.Color = pygame.Color(48, 48, 48),
                  default_value: str = 'abacada', max_len=16):
         self.position = position
         self.color = color
