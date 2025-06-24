@@ -38,3 +38,15 @@ class Character:
                           'hp': self.hp,
                           'mp': self.mp
         })
+
+    def full_json(self):
+        return json.dumps({
+                          'checksum': self.checksum,
+                          'img_link': self.img_link,
+                          'name': self.name,
+                          'hp': self.hp,
+                          'mp': self.mp,
+                          'attack': self.attack,
+                          'defense': self.defense,
+                          'speed': self.speed,
+        })

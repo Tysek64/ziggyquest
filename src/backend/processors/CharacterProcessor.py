@@ -4,6 +4,7 @@ from src.backend.Packet import Packet
 from src.backend.PacketEnums import Command, Variable, Value, Target
 from copy import deepcopy
 import random
+import json
 
 # holds state and responds to packets
 class CharacterProcessor(PacketProcessor):
@@ -22,6 +23,7 @@ class CharacterProcessor(PacketProcessor):
         }
 
         self.trigger_queue = {}
+        self.names_queue = {}
     
     def match_packet(self, packet: Packet, pattern: tuple) -> bool:
         cmd, var = pattern
@@ -55,9 +57,12 @@ class CharacterProcessor(PacketProcessor):
                                 reply_packets.append(new_packet)
                         else:
                             queued_packets = self.trigger_queue.get(self.base_character.abilities[packet.payload[2]].trigger, [])
+                            queued_names = self.names_queue.get(self.base_character.abilities[packet.payload[2]].trigger, [])
                             queued_packets.extend(self.base_character.abilities[packet.payload[2]].packets)
+                            queued_names.extend([self.base_character.abilities[packet.payload[2]].name])
                             # creates key if it did not exist
                             self.trigger_queue[self.base_character.abilities[packet.payload[2]].trigger] = queued_packets
+                            self.names_queue[self.base_character.abilities[packet.payload[2]].trigger] = queued_names
                     else:
                         # fail if ability is too expensive
                         reply_packet = Packet.generate_packet(-1, 0)
@@ -80,7 +85,16 @@ class CharacterProcessor(PacketProcessor):
 
                         reply_packets.append(reply_packet)
                 else:
-                    reply_packet = Packet.generate_packet(packet.src_net, Target.BROADCAST)
+                    reply_packet = Packet.generate_packet(packet.src_net, packet.dst_net)
+                    char_json = json.loads(self.character_state.full_json())
+                    char_json['state'] = sum([v for v in self.names_queue.values()], [])
+                    reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
+                                            #self.base_character.name if packet.payload[1] == Variable.NAME else
+                                            json.dumps(char_json))
+
+                    reply_packets.append(reply_packet)
+
+                    reply_packet = Packet.generate_packet(packet.src_net, 3 - packet.dst_net)
                     reply_packet.payload = (Command.REPLY, Variable.CHARACTER,
                                             #self.base_character.name if packet.payload[1] == Variable.NAME else
                                             self.character_state.__repr__())
@@ -119,5 +133,6 @@ class CharacterProcessor(PacketProcessor):
 
                             reply_packets.append(new_packet)
                         self.trigger_queue[k] = []
+                        self.names_queue[k] = []
 
         return reply_packets
