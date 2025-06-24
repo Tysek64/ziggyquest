@@ -7,7 +7,7 @@ class ResizableTextDrawable(Drawable, ResizeMixin):
                  parent_surface: pygame.Surface, size: int = 13, bold: bool = False, centered: bool = False,
                  editable: bool = False) -> None:
         self.parent_surface = parent_surface
-        self.font = pygame.font.SysFont('monospace', bold=bold, size=size)
+        self.font = pygame.font.Font('src/GUI/resources/MPLUSRounded1c-Regular.ttf' if not bold else 'src/GUI/resources/MPLUSRounded1c-ExtraBold.ttf', size=size)
         self.render = self.font.render(message, True, color)
         self.message = message
         self.color = color

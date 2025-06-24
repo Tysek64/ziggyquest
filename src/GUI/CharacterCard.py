@@ -28,7 +28,7 @@ class CharacterCard:
         base_margin = 0.05 * allowed_width
         inner_margin = 0.6 * base_margin
 
-        font_size = int(2 * allowed_height / 25)
+        font_size = max(2, int(2 * allowed_height / 25))
 
         image_width = allowed_width - 2 * base_margin
         image_height = 5 * image_width / 9
@@ -37,9 +37,9 @@ class CharacterCard:
         image_offset = image_height + inner_margin
 
         card_rect = pygame.draw.rect(ctx, 'ivory4' if self.info['hp'] == 0 else ('lightpink1' if active else 'ivory4') , pygame.Rect(x, y, allowed_width, allowed_height))
-        font = pygame.font.SysFont('monospace', font_size)
-        small_font = pygame.font.SysFont('monospace', int(font_size * 0.75))
-        bold_font = pygame.font.SysFont('monospace', bold=True, size=font_size)
+        font = pygame.font.Font('src/GUI/resources/MPLUSRounded1c-Regular.ttf', font_size - 2)
+        small_font = pygame.font.Font('src/GUI/resources/MPLUSRounded1c-Regular.ttf', int(font_size * 0.75) - 2)
+        bold_font = pygame.font.Font('src/GUI/resources/MPLUSRounded1c-ExtraBold.ttf', font_size - 2)
 
         label = bold_font.render(self.info['name'], 1, 'black')
         label = pygame.transform.scale(label, (min(label.get_width(), allowed_width - 2 * base_margin), label.get_height()))
@@ -83,9 +83,17 @@ class AbilityCard:
 
     def draw(self, ctx, x, y):
         card_rect = pygame.draw.rect(ctx, 'ivory4' if self.info == '' or self.info[0] == '-' else 'lightpink1', pygame.Rect(x, y, 500, 50))
-        font = pygame.font.SysFont('monospace', 24)
+        font = pygame.font.Font('src/GUI/resources/MPLUSRounded1c-Regular.ttf', 22)
 
         label = font.render(self.info, 1, 'black')
-        ctx.blit(label, (x + 10, y + 10))
+        ctx.blit(label, (x + 10, y + 10), (0, 0, 490, label.get_height()))
+
+        if label.get_width() >= 500:
+            alpha_color = pygame.colordict.THECOLORS['ivory4'] if self.info == '' or self.info[0] == '-' else pygame.colordict.THECOLORS['lightpink1']
+            for i in range(5, 55, 5):
+                alpha_surface = pygame.Surface((i, 50))
+                alpha_surface.set_alpha(255 // 3)
+                alpha_surface.fill(alpha_color)
+                ctx.blit(alpha_surface, (x + 500 - i, y))
 
         return card_rect
