@@ -8,8 +8,6 @@ from src.GUI.drawables.ResizableTextDrawable import ResizableTextDrawable
 import pygame
 
 class ResizableButton(Drawable, ResizeMixin, ClickableMixin):
-
-
     def __init__(self, position: pygame.Rect, message: str,
                  background_color: pygame.Color, on_click: Callable,
                  parent_surface: pygame.Surface, font_color: pygame.Color = pygame.Color(0,0,0)):

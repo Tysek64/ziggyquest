@@ -1,9 +1,13 @@
+from pathlib import Path
+
 from src.GUI.SurfaceRenderer import SurfaceRenderer
 from src.GUI.WindowManager import WindowManager
 import pygame
 
+from src.GUI.drawables.EditableTextField import EditableTextField
 from src.GUI.drawables.ResizableButton import ResizableButton
 from src.GUI.drawables.ResizableImageDrawable import ResizableImageDrawable
+from src.GUI.drawables.ResizableInputPopup import ResizableInputPopup
 from src.GUI.drawables.ResizableTextDrawable import ResizableTextDrawable
 from src.GUI.drawables.VerticalDrawable import VerticalDrawable
 
@@ -20,15 +24,19 @@ if __name__ == '__main__':
 
     parent_surface = pygame.display.get_surface()
     render_objects = [
-        (VerticalDrawable(position=pygame.Rect(480, 0, 1000, parent_surface.get_height()),
+        (VerticalDrawable(position=pygame.Rect(480, 0, 400, parent_surface.get_height()),
                           color=pygame.Color('ivory2'), parent_surface=parent_surface,
                           contents=[
-                              ResizableTextDrawable((0,0), 'One_nig',
-                                                    color=pygame.Color('red'), parent_surface=parent_surface,
-                                                    centered=False),
+                              ResizableImageDrawable(parent_surface, Path('./src/GUI/resources/ZiggyQuest.png'),
+                                                     (0,0), size=(300, 300)),
+                              ResizableButton(pygame.Rect(0, 0, 200, 100), 'Multiplayer', pygame.Color('pink'),
+                                              (lambda: True), parent_surface),
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Exit', pygame.Color('pink'),
-                                              (lambda : menu.close()), parent_surface)
-                          ], row_width=1), {})
+                                              (lambda: menu.close()), parent_surface),
+                          ], row_width=1, scale_to_content=True), {}),
+        (ResizableInputPopup(pygame.Rect(0, 0, 200, 100), 'Popup', pygame.Color('pink'),
+                             lambda: print('cancelled'), lambda: print('accepted'), parent_surface), {}),
+        (EditableTextField(pygame.Rect(300, 0, 200, 20), parent_surface), {})
     ]
 
     for renderer in renderers:

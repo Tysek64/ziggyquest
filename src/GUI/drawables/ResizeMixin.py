@@ -32,6 +32,7 @@ class ResizeMixin:
         self.begin_points = {attrib_name: deepcopy(self.__getattribute__(attrib_name)) for attrib_name in points}
         self.copy_surfaces(surfaces)
 
+
     def resize(self):
         current_size = self.main_surface.get_size()
         x_scale, y_scale = current_size[0] / self.begin_size[0], current_size[1] / self.begin_size[1]
