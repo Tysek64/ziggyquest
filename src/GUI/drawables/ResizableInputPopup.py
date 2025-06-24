@@ -48,7 +48,7 @@ class ResizableInputPopup(ResizeMixin, CompositeMixin):
         # Position to the left of accept_button, with same vertical alignment
         checkbox_size = (self.__button_size[1], self.__button_size[1])  # square checkbox
         checkbox_pos = (
-            self.accept_button.position.left - self.__left_margin - checkbox_size[0],
+            self.accept_button.position.left - self.__left_margin * 0.1 - checkbox_size[0],
             self.accept_button.position.top
         )
 
