@@ -36,7 +36,7 @@ function addStep (ability) {
 	let newRow = document.createElement("tr");
 
 	let teamInput = createSelect(["me", "opponent"]);
-	let targetInput = createSelect(["broadcast", "player_unicast", "target_unicast", "random_unicast", "self_unicast"]);
+	let targetInput = createSelect(["broadcast", "player_unicast", "random_unicast", "self_unicast"]);
 	let commandInput = createSelect(["set", "increase", "decrease"]);
 	let variableInput = createSelect(["damage", "HP", "MP", "attack", "defense", "speed"]);
 	let valueInput = createSelect(["default", "current", "other"]);

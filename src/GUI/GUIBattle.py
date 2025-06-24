@@ -125,7 +125,9 @@ class GUIBattleManager(GUIController):
                 offset = (self.height - (team_remainders[j] * safe_zone_height)) / 2 if in_last_row else 0
 
                 card_rect = card.draw(self.screen, (self.screen.get_width() - (x_pos + safe_zone_width) if card.team == 2 else x_pos) + 20, y_pos + offset, (card.team == self.active_team) and self.active, card_height)
-                self.cards[j][i] = (card_rect, card)
+                try:
+                    self.cards[j][i] = (card_rect, card)
+                except: pass
 
         for i, (_, ability) in enumerate(self.abilities):
             card_rect = ability.draw(self.screen, self.width / 2 - 250, self.height / 2 - (len(self.abilities) / 2) * 75 + i * 75)

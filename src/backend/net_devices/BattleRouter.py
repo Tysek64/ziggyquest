@@ -37,7 +37,7 @@ class BattleRouter(BaseRouter):
             self.current_move = (False, None, None)
         elif packet.payload is not None and packet.payload[0] == Command.REPLY:
             if packet.src_net != 0:
-                relay_packet = Packet.generate_packet(0, Target.BROADCAST if packet.payload[1] != Variable.ABILITY else self.current_team)
+                relay_packet = Packet.generate_packet(0, packet.dst_host if packet.payload[1] != Variable.ABILITY else self.current_team)
                 relay_packet.id = packet.id
                 relay_packet.src_net = packet.src_net
                 relay_packet.payload = packet.payload

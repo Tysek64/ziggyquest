@@ -41,11 +41,14 @@ class WindowManager:
             for event in pygame.event.get():
                 self.process_event(event)
 
-            pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
-            for renderer in self.renderers:
-                renderer.draw()
+            try:
+                pygame.display.get_surface().fill(pygame.Color(255, 255, 255))
+                for renderer in self.renderers:
+                    renderer.draw()
 
-            pygame.display.update()
+                pygame.display.update()
+            except AttributeError:
+                break
 
         pygame.quit()
         self.pygame_lock.release()
