@@ -18,14 +18,15 @@ class ResizableInputPopup(ResizeMixin, CompositeMixin):
         self.color = color
         self.__top_margin = 5
         self.__left_margin = 20
+        self.__font_size = self.position.height // 5
         self.__button_size = (self.position.width / 3, self.position.height / 6) # wybrane dowolnie, zeby ladnie wygladalo
-        self.__text_field_size = (self.position.width / 1.25, self.position.height / 3)
+        self.__text_field_size = (self.position.width - 2 * self.__left_margin, self.position.height / 3)
 
         text_pos = (self.position.topleft[0] + self.__left_margin, self.position.topleft[1] + self.__top_margin)
-        self.text = ResizableTextDrawable(text_pos, text, text_color, parent_surface)
+        self.text = ResizableTextDrawable(text_pos, text, text_color, parent_surface, size=self.__font_size // 2)
 
         input_pos = (self.position.bottomleft[0] + self.__left_margin, self.text.get_rect().bottomleft[1] + self.__top_margin)
-        self.input = EditableTextField(pygame.Rect(input_pos, self.__text_field_size), parent_surface)
+        self.input = EditableTextField(pygame.Rect(input_pos, self.__text_field_size), parent_surface, font_size=self.__font_size)
 
         cancel_pos = (self.position.bottomleft[0] + self.__left_margin, self.input.get_rect().bottomleft[1] + self.__top_margin)
         self.cancel_button = ResizableButton(pygame.Rect(cancel_pos, self.__button_size), 'Cancel',
