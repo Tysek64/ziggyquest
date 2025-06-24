@@ -21,7 +21,7 @@ class ResizableTextDrawable(Drawable, ResizeMixin):
     def draw(self, surface, *args, **kwargs):
         self.render = self.font.render(self.message, True, self.color)
         if self.editable: self.reinit(points=['position'], surfaces=['render'], parent_surface=self.parent_surface)
-        self.resize()
+        else: self.resize()
         if not self.centered:
             surface.blit(self.render, self.position)
         else:

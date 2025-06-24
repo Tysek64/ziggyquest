@@ -29,14 +29,15 @@ if __name__ == '__main__':
                           contents=[
                               ResizableImageDrawable(parent_surface, Path('./src/GUI/resources/ZiggyQuest.png'),
                                                      (0,0), size=(300, 300)),
+                              ResizableButton(pygame.Rect(0, 0, 200, 100), 'Singleplayer', pygame.Color('pink'),
+                                              (lambda: True), parent_surface),
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Multiplayer', pygame.Color('pink'),
                                               (lambda: True), parent_surface),
                               ResizableButton(pygame.Rect(0, 0, 200, 100), 'Exit', pygame.Color('pink'),
                                               (lambda: menu.close()), parent_surface),
                           ], row_width=1, scale_to_content=True), {}),
-        (ResizableInputPopup(pygame.Rect(0, 0, 200, 100), 'Popup', pygame.Color('pink'),
+        (ResizableInputPopup(pygame.Rect(0, 0, 200, 100), 'Enter server ip:', pygame.Color('pink'),
                              lambda: print('cancelled'), lambda: print('accepted'), parent_surface), {}),
-        (EditableTextField(pygame.Rect(300, 0, 200, 20), parent_surface), {})
     ]
 
     for renderer in renderers:
